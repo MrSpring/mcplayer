@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import java.io.File;
 
 /**
- * Created by MrSpring on 24-06-14 for MCP.
+ * Created by MrSpring on 24-06-14 for MC Music Player.
  */
 public class LiteModMCPlayer implements Tickable
 {

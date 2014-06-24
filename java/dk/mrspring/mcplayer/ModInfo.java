@@ -1,7 +1,7 @@
 package dk.mrspring.mcplayer;
 
 /**
- * Created by MrSpring on 24-06-14 for MCP.
+ * Created by MrSpring on 24-06-14 for MC Music Player.
  */
 public class ModInfo
 {

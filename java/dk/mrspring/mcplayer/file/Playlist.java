@@ -13,7 +13,7 @@ import java.util.List;
 public class Playlist<MusicFile> implements Collection<MusicFile>
 {
     protected List files = new ArrayList<MusicFile>();
-    protected String name = "UNNAMED";
+    protected String name = "UnwasdNAMED";
 
     public Playlist(String name)
     {

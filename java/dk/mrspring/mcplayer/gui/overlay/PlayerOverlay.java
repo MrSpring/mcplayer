@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class PlayerOverlay
 {
-	private static final ResourceLocation COVER_ART = new ResourceLocation("example", "textures/clock/face.png");
+	private static final ResourceLocation COVER_ART = new ResourceLocation("mcplayer", "textures/cover/face.png");
 
 	private static float originX = 5F;
 	private static float originY = 5F;

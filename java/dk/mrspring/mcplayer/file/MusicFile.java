@@ -1,6 +1,7 @@
 package dk.mrspring.mcplayer.file;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import net.minecraft.util.ResourceLocation;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -8,9 +9,14 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.images.Artwork;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Konrad on 25-06-2014.
@@ -27,6 +33,7 @@ public class MusicFile
     protected String title = "UNTITLED";
     protected String album = "UNTITLED";
     protected String artist = "UNTITLED";
+	protected ResourceLocation coverLocation = new ResourceLocation("mcplayer", "textures/cover/default.png");
 
     public MusicFile(File base)
     {
@@ -42,7 +49,7 @@ public class MusicFile
                 this.type = WAV;
     }
 
-    public String getField(FieldKey key) throws IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException, CannotReadException
+    public String getStringField(FieldKey key) throws IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException, CannotReadException
     {
         AudioFile f = AudioFileIO.read(this.baseFile);
 
@@ -63,11 +70,48 @@ public class MusicFile
         return temp; // OLD return temp;
     }
 
-    public String getArtistFromTag()
+	public ResourceLocation getCoverLocation()
+	{
+		return this.coverLocation;
+	}
+
+	public void getCover()
+	{
+		try
+		{
+			AudioFile f = AudioFileIO.read(this.baseFile);
+			byte[] rawImage = f.getTag().getFirstField(FieldKey.COVER_ART).getRawContent();
+			this.coverLocation = new ResourceLocation("", "textures/cover/cover.png");
+			FileOutputStream fileOutputStream = new FileOutputStream(new File(this.coverLocation.getResourcePath()));
+			fileOutputStream.write(rawImage);
+			fileOutputStream.close();
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		} catch (CannotReadException e)
+		{
+			e.printStackTrace();
+		} catch (ReadOnlyFileException e)
+		{
+			e.printStackTrace();
+		} catch (InvalidAudioFrameException e)
+		{
+			e.printStackTrace();
+		} catch (TagException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public String getArtistFromTag()
     {
         try
         {
-            String temp = this.getField(FieldKey.ARTIST);
+            String temp = this.getStringField(FieldKey.ARTIST);
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');
@@ -112,7 +156,7 @@ public class MusicFile
     {
         try
         {
-            String temp = this.getField(FieldKey.ALBUM);
+            String temp = this.getStringField(FieldKey.ALBUM);
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');
@@ -157,7 +201,7 @@ public class MusicFile
     {
         try
         {
-            String temp = this.getField(FieldKey.TITLE);
+            String temp = this.getStringField(FieldKey.TITLE);
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');

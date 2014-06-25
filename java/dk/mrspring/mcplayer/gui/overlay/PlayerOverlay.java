@@ -17,7 +17,7 @@ public class PlayerOverlay
 {
 	public static float alpha = 0.5F;
 
-	private static final ResourceLocation COVER_ART = new ResourceLocation("mcplayer", "textures/cover/face.png");
+	private static final ResourceLocation COVER_ART = new ResourceLocation("", "textures/cover/cover.png");
 
 	private static float originX = 5F;
 	private static float originY = 5F;
@@ -68,7 +68,9 @@ public class PlayerOverlay
 
 		glDrawRect(5F, 5F, (width + additionalWidth) + originX, height + originY, ReadableColor.BLACK, alpha);
 
-		minecraft.getTextureManager().bindTexture(COVER_ART);
+		minecraft.getTextureManager().bindTexture(playlist.get(index).getCoverLocation());
+
+
 
 		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
 

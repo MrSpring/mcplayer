@@ -13,15 +13,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
+import sun.awt.image.PNGImageDecoder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by MrSpring on 24-06-14 for MC Music Player.
  */
-public class LiteModMCPlayer implements Tickable, Configurable
+public class LiteModMCPlayer implements Tickable//, Configurable
 {
 	private static KeyBinding sizeToggler = new KeyBinding("key.mcplayer.toggle_size", Keyboard.KEY_F12, "key.categories.litemods");
 	public static boolean isSmall = false;
@@ -38,23 +41,17 @@ public class LiteModMCPlayer implements Tickable, Configurable
 		if (hasInitialised)
 		{
 			timer++;
-
 			if (timer > 160)
 			{
-
 				index++;
 				if (index > allFiles.size())
 					index = 0;
-
 				timer = 0;
 			}
-
 			if (sizeToggler.isPressed())
 				isSmall = !isSmall;
-
 			PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, index, allFiles);
 		}
-
 	}
 
 	@Override
@@ -76,7 +73,7 @@ public class LiteModMCPlayer implements Tickable, Configurable
 	{
 		// TODO Config and stuffz
 
-        extensions.add(".mp3");
+		extensions.add(".mp3");
         extensions.add(".wav");
 
 		LiteLoader.getInput().registerKeyBinding(sizeToggler);
@@ -90,15 +87,17 @@ public class LiteModMCPlayer implements Tickable, Configurable
             System.out.println(file.getTitle());
         }
 
+		allFiles.get(0).getCover();
+
 		hasInitialised = true;
 	}
 
 	@Override
 	public void upgradeSettings(String version, File configPath, File oldConfigPath) { }
-
+/*
 	@Override
 	public Class<? extends ConfigPanel> getConfigPanelClass()
 	{
 		return MCPlayerConfigPanel.class;
-	}
+	}*/
 }

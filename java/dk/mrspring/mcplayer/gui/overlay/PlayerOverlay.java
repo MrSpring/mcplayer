@@ -1,5 +1,7 @@
 package dk.mrspring.mcplayer.gui.overlay;
 
+import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.list.Playlist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,21 +23,41 @@ public class PlayerOverlay
 	private static float width = 80F;
 	private static float height = 80F;
 
+    private static final float widthOverTitle = 10F;
+
 	private static float additionalWidth = 0F;
+    private static float oldAdditionalWidth = additionalWidth;
 
-	private static String songTitle = "Take Back The Night";
-	private static String albumTitle = "In Real Life";
-	private static String artist = "TryHardNinja";
+	private static String song = "UNTITLED";
+	private static String album = "UNTITLED";
+	private static String artist = "UNTITLED";
 
-	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft)
+	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, int index, Playlist<MusicFile> playlist)
 	{
-		int titleWidth = fontRenderer.getStringWidth(songTitle);
+        song = playlist.get(index).getTitle();
+        album = playlist.get(index).getAlbum();
+        artist = playlist.get(index).getArtist();
 
-		if (isSmall && additionalWidth > 0)
+		int titleWidth = fontRenderer.getStringWidth(song);
+        int targetWidth = titleWidth;
+
+        if (!isSmall)
+        {
+            if (additionalWidth < targetWidth + widthOverTitle)
+                additionalWidth += 5F;
+
+            if (additionalWidth > targetWidth + widthOverTitle + 5)
+                additionalWidth -= 5F;
+        }
+        else
+            if (additionalWidth > 0)
+                additionalWidth -= 5F;
+
+		/*if (isSmall && additionalWidth > 0)
 			additionalWidth -= 5F;
 
 		if (!isSmall && additionalWidth < titleWidth + 10)
-			additionalWidth += 5F;
+			additionalWidth += 5F;*/
 
 		glDrawRect(5F, 5F, (width + additionalWidth) + originX, height + originY, ReadableColor.BLACK, 0.5F);
 
@@ -43,12 +65,14 @@ public class PlayerOverlay
 
 		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
 
-		if (additionalWidth > titleWidth)
+		if (additionalWidth == oldAdditionalWidth)
 		{
-			fontRenderer.drawString(songTitle, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
-			fontRenderer.drawString(albumTitle, 5 + 80 + 5, 5 + 21, 0xCCCCCC, true);
+			fontRenderer.drawString(song, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
+			fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xCCCCCC, true);
 			fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xCCCCCC, true);
 		}
+
+        oldAdditionalWidth = additionalWidth;
 	}
 
 	private static void glDrawRect(float x1, float y1, float x2, float y2, ReadableColor colour, float alpha)

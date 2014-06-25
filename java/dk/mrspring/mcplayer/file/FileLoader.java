@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class FileLoader
 {
-    public static void addFiles(String path, List<String> extensions, Playlist fileList)
+    public static void addFiles(String path, List<String> extensions, dk.mrspring.mcplayer.list.Playlist<MusicFile> fileList)
     {
         try
         {

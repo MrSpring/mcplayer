@@ -1,16 +1,13 @@
-package dk.mrspring.mcplayer.file;
+package dk.mrspring.mcplayer.list;
 
 import dk.mrspring.mcplayer.file.MusicFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Konrad on 25-06-2014.
  */
-public class Playlist<MusicFile> implements Collection<MusicFile>
+public class Playlist<MusicFile> implements List<MusicFile>
 {
     protected List files = new ArrayList<MusicFile>();
     protected String name = "UNNAMED";
@@ -19,6 +16,7 @@ public class Playlist<MusicFile> implements Collection<MusicFile>
     {
         this.name = name;
     }
+
 
     @Override
     public int size()
@@ -51,9 +49,9 @@ public class Playlist<MusicFile> implements Collection<MusicFile>
     }
 
     @Override
-    public <MusicFile> MusicFile[] toArray(MusicFile[] a)
+    public <T> T[] toArray(T[] a)
     {
-        return (MusicFile[]) this.files.toArray(a);
+        return (T[]) this.files.toArray(a);
     }
 
     @Override
@@ -81,6 +79,12 @@ public class Playlist<MusicFile> implements Collection<MusicFile>
     }
 
     @Override
+    public boolean addAll(int index, Collection<? extends MusicFile> c)
+    {
+        return this.files.addAll(index, c);
+    }
+
+    @Override
     public boolean removeAll(Collection<?> c)
     {
         return this.files.removeAll(c);
@@ -96,5 +100,59 @@ public class Playlist<MusicFile> implements Collection<MusicFile>
     public void clear()
     {
         this.files.clear();
+    }
+
+    @Override
+    public MusicFile get(int index)
+    {
+        return (MusicFile) this.files.get(index);
+    }
+
+    @Override
+    public MusicFile set(int index, MusicFile element)
+    {
+        return (MusicFile) this.files.set(index, element);
+    }
+
+    @Override
+    public void add(int index, MusicFile element)
+    {
+        this.files.add(index, element);
+    }
+
+    @Override
+    public MusicFile remove(int index)
+    {
+        return (MusicFile) this.files.remove(index);
+    }
+
+    @Override
+    public int indexOf(Object o)
+    {
+        return this.files.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o)
+    {
+        return this.files.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<MusicFile> listIterator()
+    {
+        return this.files.listIterator();
+    }
+
+    @Override
+    public ListIterator<MusicFile> listIterator(int index)
+    {
+        return this.files.listIterator(index);
+    }
+
+    @Override
+    public List<MusicFile> subList(int fromIndex, int toIndex)
+    {
+        return this.files.subList(fromIndex, toIndex);
     }
 }

@@ -4,11 +4,10 @@ import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.file.Playlist;
+import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.gui.overlay.PlayerOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import org.jaudiotagger.audio.mp3.MP3File;
 import org.lwjgl.input.Keyboard;
 
 import java.io.File;
@@ -24,16 +23,29 @@ public class LiteModMCPlayer implements Tickable
 	private boolean isSmall = false;
     private Playlist<MusicFile> allFiles = new Playlist<MusicFile>("mcplayer.list.all");
     public static List<String> extensions = new ArrayList<String>();
+    private int timer = 0, index = 0;
 
-	@Override
+    @Override
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
 	{
 		// TODO GUIs and stuffz
 
+        timer++;
+
+        if (timer > 160)
+        {
+
+            index++;
+            if (index > allFiles.size())
+                index = 0;
+
+            timer = 0;
+        }
+
 		if (sizeToggler.isPressed())
 			isSmall = !isSmall;
 
-		PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft);
+		PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, index, allFiles);
 
 	}
 

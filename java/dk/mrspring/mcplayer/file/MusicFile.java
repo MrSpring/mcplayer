@@ -46,7 +46,15 @@ public class MusicFile
     {
         AudioFile f = AudioFileIO.read(this.baseFile);
 
-        String temp = f.getTag().getFields(key).get(0).toString();
+		String temp = "UNTITLED";
+
+		try
+		{
+			temp = f.getTag().getFields(key).get(0).toString();
+		} catch (IndexOutOfBoundsException e)
+		{
+			System.out.println(" Unable to get requested info from tag.");
+		}
 
         /*String temp = title.substring(6);
         int i = temp.lastIndexOf('"');
@@ -63,7 +71,11 @@ public class MusicFile
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');
-            temp = temp.substring(0, i);
+
+			if (i == -1)
+				return temp;
+
+			temp = temp.substring(0, i);
             temp = temp.trim();
 
             return temp;
@@ -104,6 +116,10 @@ public class MusicFile
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');
+
+			if (i == -1)
+				return temp;
+
             temp = temp.substring(0, i);
             temp = temp.trim();
 
@@ -145,7 +161,11 @@ public class MusicFile
 
             temp = temp.substring(6);
             int i = temp.lastIndexOf('"');
-            temp = temp.substring(0, i);
+
+			if (i == -1)
+				return temp;
+
+			temp = temp.substring(0, i);
             temp = temp.trim();
 
             return temp;

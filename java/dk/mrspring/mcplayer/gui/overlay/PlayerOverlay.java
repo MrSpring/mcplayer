@@ -15,6 +15,8 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class PlayerOverlay
 {
+	public static float alpha = 0.5F;
+
 	private static final ResourceLocation COVER_ART = new ResourceLocation("mcplayer", "textures/cover/face.png");
 
 	private static float originX = 5F;
@@ -34,12 +36,17 @@ public class PlayerOverlay
 
 	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, int index, Playlist<MusicFile> playlist)
 	{
+		System.out.println(" Playlist size: " + playlist.size());
+
         song = playlist.get(index).getTitle();
         album = playlist.get(index).getAlbum();
         artist = playlist.get(index).getArtist();
 
-		int titleWidth = fontRenderer.getStringWidth(song);
-        int targetWidth = titleWidth;
+		int songWidth = fontRenderer.getStringWidth(song);
+		int albumWidth = fontRenderer.getStringWidth(album);
+		int artistWidth = fontRenderer.getStringWidth(artist);
+
+		int targetWidth = Math.max(songWidth, Math.max(albumWidth, artistWidth));
 
         if (!isSmall)
         {
@@ -59,13 +66,13 @@ public class PlayerOverlay
 		if (!isSmall && additionalWidth < titleWidth + 10)
 			additionalWidth += 5F;*/
 
-		glDrawRect(5F, 5F, (width + additionalWidth) + originX, height + originY, ReadableColor.BLACK, 0.5F);
+		glDrawRect(5F, 5F, (width + additionalWidth) + originX, height + originY, ReadableColor.BLACK, alpha);
 
 		minecraft.getTextureManager().bindTexture(COVER_ART);
 
 		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
 
-		if (additionalWidth == oldAdditionalWidth)
+		if (additionalWidth == oldAdditionalWidth && !isSmall)
 		{
 			fontRenderer.drawString(song, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
 			fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xCCCCCC, true);

@@ -46,47 +46,136 @@ public class MusicFile
     {
         AudioFile f = AudioFileIO.read(this.baseFile);
 
-        String title = f.getTag().getFields(FieldKey.TITLE).get(0).toString();
+        String temp = f.getTag().getFields(key).get(0).toString();
 
-        String temp = title.substring(6);
+        /*String temp = title.substring(6);
         int i = temp.lastIndexOf('"');
-        temp = temp.substring(0, i - 1);
+        temp = temp.substring(0, i - 1);*/
 
-        return temp;
+        return temp; // OLD return temp;
+    }
+
+    public String getArtistFromTag()
+    {
+        try
+        {
+            String temp = this.getField(FieldKey.ARTIST);
+
+            temp = temp.substring(6);
+            int i = temp.lastIndexOf('"');
+            temp = temp.substring(0, i);
+            temp = temp.trim();
+
+            return temp;
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (TagException e)
+        {
+            e.printStackTrace();
+        } catch (ReadOnlyFileException e)
+        {
+            e.printStackTrace();
+        } catch (InvalidAudioFrameException e)
+        {
+            e.printStackTrace();
+        } catch (CannotReadException e)
+        {
+            e.printStackTrace();
+        }
+
+        return "UNTITLED";
+    }
+
+    public String getArtist()
+    {
+        if (this.artist.equals("UNTITLED"))
+            this.artist = this.getArtistFromTag();
+
+        return this.artist;
+    }
+
+    public String getAlbumFromTag()
+    {
+        try
+        {
+            String temp = this.getField(FieldKey.ALBUM);
+
+            temp = temp.substring(6);
+            int i = temp.lastIndexOf('"');
+            temp = temp.substring(0, i);
+            temp = temp.trim();
+
+            return temp;
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (TagException e)
+        {
+            e.printStackTrace();
+        } catch (ReadOnlyFileException e)
+        {
+            e.printStackTrace();
+        } catch (InvalidAudioFrameException e)
+        {
+            e.printStackTrace();
+        } catch (CannotReadException e)
+        {
+            e.printStackTrace();
+        }
+
+        return "UNTITLED";
+    }
+
+    public String getAlbum()
+    {
+        if (this.album.equals("UNTITLED"))
+            this.album = this.getAlbumFromTag();
+
+        return this.album;
+    }
+
+    public String getTitleFromTag()
+    {
+        try
+        {
+            String temp = this.getField(FieldKey.TITLE);
+
+            temp = temp.substring(6);
+            int i = temp.lastIndexOf('"');
+            temp = temp.substring(0, i);
+            temp = temp.trim();
+
+            return temp;
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (TagException e)
+        {
+            e.printStackTrace();
+        } catch (ReadOnlyFileException e)
+        {
+            e.printStackTrace();
+        } catch (InvalidAudioFrameException e)
+        {
+            e.printStackTrace();
+        } catch (CannotReadException e)
+        {
+            e.printStackTrace();
+        }
+
+        return "UNTITLED";
     }
 
     public String getTitle()
     {
-        switch (this.type)
-        {
-            case MP3:
-            {
-                try
-                {
-                    return this.getField(FieldKey.TITLE);
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                } catch (TagException e)
-                {
-                    e.printStackTrace();
-                } catch (ReadOnlyFileException e)
-                {
-                    e.printStackTrace();
-                } catch (InvalidAudioFrameException e)
-                {
-                    e.printStackTrace();
-                } catch (CannotReadException e)
-                {
-                    e.printStackTrace();
-                }
+        if (this.title.equals("UNTITLED"))
+            this.title = this.getTitleFromTag();
 
-                break;
-            }
-            // TODO Add WAV and other extensions
-        }
-
-        return "UNTITLED";
+        return this.title;
     }
 
     @Override

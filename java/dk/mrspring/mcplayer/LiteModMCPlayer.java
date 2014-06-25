@@ -25,7 +25,7 @@ public class LiteModMCPlayer implements Tickable
 		if (sizeToggler.isPressed())
 			isSmall = !isSmall;
 
-		PlayerOverlay.render(minecraft.fontRenderer, isSmall);
+		PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft);
 
 	}
 

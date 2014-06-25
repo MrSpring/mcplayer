@@ -1,7 +1,9 @@
 package dk.mrspring.mcplayer.gui.overlay;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.ReadableColor;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -11,36 +13,42 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class PlayerOverlay
 {
-	private static float originX = 0.5F;
-	private static float originY = 0.5F;
+	private static final ResourceLocation COVER_ART = new ResourceLocation("example", "textures/clock/face.png");
+
+	private static float originX = 5F;
+	private static float originY = 5F;
 
 	private static float width = 80F;
 	private static float height = 80F;
+
+	private static float additionalWidth = 0F;
 
 	private static String songTitle = "Take Back The Night";
 	private static String albumTitle = "In Real Life";
 	private static String artist = "TryHardNinja";
 
-	private static float alpha = 1.0F;
-
-	public static void render(FontRenderer fontRenderer, boolean isSmall)
+	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft)
 	{
-		int titleWidth = 0;
+		int titleWidth = fontRenderer.getStringWidth(songTitle);
 
-		if (!isSmall)
-			 titleWidth = fontRenderer.getStringWidth(songTitle);
+		if (isSmall && additionalWidth > 0)
+			additionalWidth -= 5F;
 
-		glDrawRect(5F, 5F, (width + titleWidth + (titleWidth != 0 ? 10 : 0)) + originX, height + originY, ReadableColor.BLACK, 0.5F);
-		glDrawRect(5F, 5F, width + originX, height + originY, ReadableColor.BLUE, 0.75F);
+		if (!isSmall && additionalWidth < titleWidth + 10)
+			additionalWidth += 5F;
 
-		if (!isSmall)
+		glDrawRect(5F, 5F, (width + additionalWidth) + originX, height + originY, ReadableColor.BLACK, 0.5F);
+
+		minecraft.getTextureManager().bindTexture(COVER_ART);
+
+		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
+
+		if (additionalWidth > titleWidth)
 		{
-			fontRenderer.drawString(songTitle, 5 + 80 - 0, 5 + 10, 0xFFFFFF, true);
-			fontRenderer.drawString(albumTitle, 5 + 80 - 0, 5 + 21, 0xCCCCCC, true);
-			fontRenderer.drawString(artist, 5 + 80 - 0, 5 + 32, 0xCCCCCC, true);
+			fontRenderer.drawString(songTitle, 5 + 80, 5 + 10, 0xFFFFFF, true);
+			fontRenderer.drawString(albumTitle, 5 + 80, 5 + 21, 0xCCCCCC, true);
+			fontRenderer.drawString(artist, 5 + 80, 5 + 32, 0xCCCCCC, true);
 		}
-
-		alpha -= 0.1F;
 	}
 
 	private static void glDrawRect(float x1, float y1, float x2, float y2, ReadableColor colour, float alpha)
@@ -65,5 +73,27 @@ public class PlayerOverlay
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
+	}
+
+	private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2)
+	{
+		// Set the appropriate OpenGL modes
+		glDisable(GL_LIGHTING);
+		glDisable(GL_BLEND);
+		glAlphaFunc(GL_GREATER, 0.01F);
+		glEnable(GL_TEXTURE_2D);
+		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+		float texMapScale = 0.001953125F; // 512px
+
+		// We use the tessellator rather than drawing individual quads because it uses vertex arrays to
+		// draw the quads more efficiently.
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.addVertexWithUV(x + 0,     y + height, 0, u  * texMapScale, v2 * texMapScale);
+		tessellator.addVertexWithUV(x + width, y + height, 0, u2 * texMapScale, v2 * texMapScale);
+		tessellator.addVertexWithUV(x + width, y + 0,      0, u2 * texMapScale, v  * texMapScale);
+		tessellator.addVertexWithUV(x + 0,     y + 0,      0, u  * texMapScale, v  * texMapScale);
+		tessellator.draw();
 	}
 }

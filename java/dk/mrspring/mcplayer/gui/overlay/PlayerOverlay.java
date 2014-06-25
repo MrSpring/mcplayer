@@ -45,9 +45,9 @@ public class PlayerOverlay
 
 		if (additionalWidth > titleWidth)
 		{
-			fontRenderer.drawString(songTitle, 5 + 80, 5 + 10, 0xFFFFFF, true);
-			fontRenderer.drawString(albumTitle, 5 + 80, 5 + 21, 0xCCCCCC, true);
-			fontRenderer.drawString(artist, 5 + 80, 5 + 32, 0xCCCCCC, true);
+			fontRenderer.drawString(songTitle, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
+			fontRenderer.drawString(albumTitle, 5 + 80 + 5, 5 + 21, 0xCCCCCC, true);
+			fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xCCCCCC, true);
 		}
 	}
 

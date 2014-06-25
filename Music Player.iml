@@ -9,10 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Client" />
     <orderEntry type="module" module-name="LiteLoader" />
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="library" name="lwjgl-2.9.0" level="project" />
-    <orderEntry type="library" name="jaudiotagger-2.2.0-20130321.142353-1" level="project" />
-    <orderEntry type="library" name="jl-1.0.1" level="project" />
+    <orderEntry type="jdk" jdkName="JavaSE-1.6" jdkType="JavaSDK" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -22,6 +19,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lwjgl-2.9.0" level="project" />
+    <orderEntry type="library" name="jaudiotagger-2.2.0-20130321.142353-1" level="project" />
+    <orderEntry type="library" name="jl1.0.1" level="project" />
   </component>
 </module>
 

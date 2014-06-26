@@ -1,6 +1,7 @@
 package dk.mrspring.mcplayer.file;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import net.minecraft.client.resources.DefaultResourcePack;
 import net.minecraft.util.ResourceLocation;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -9,14 +10,16 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.TagField;
+import org.jaudiotagger.tag.datatype.DataTypes;
+import org.jaudiotagger.tag.id3.ID3v23Frame;
+import org.jaudiotagger.tag.id3.ID3v23Tag;
+import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
 import org.jaudiotagger.tag.images.Artwork;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 /**
  * Created by Konrad on 25-06-2014.
@@ -34,6 +37,7 @@ public class MusicFile
     protected String album = "UNTITLED";
     protected String artist = "UNTITLED";
 	protected ResourceLocation coverLocation = new ResourceLocation("mcplayer", "textures/cover/default.png");
+	protected BufferedImage cover;
 
     public MusicFile(File base)
     {
@@ -79,12 +83,29 @@ public class MusicFile
 	{
 		try
 		{
-			AudioFile f = AudioFileIO.read(this.baseFile);
-			byte[] rawImage = f.getTag().getFirstField(FieldKey.COVER_ART).getRawContent();
-			this.coverLocation = new ResourceLocation("", "textures/cover/cover.png");
-			FileOutputStream fileOutputStream = new FileOutputStream(new File(this.coverLocation.getResourcePath()));
-			fileOutputStream.write(rawImage);
-			fileOutputStream.close();
+			if (this.cover == null)
+			{
+				AudioFile f = AudioFileIO.read(this.baseFile);
+				TagField coverArtField = f.getTag().getFirstField(FieldKey.COVER_ART);
+				FrameBodyAPIC body = (FrameBodyAPIC) ((ID3v23Frame) coverArtField).getBody();
+				byte[] rawImage = (byte[]) body.getObjectValue(DataTypes.OBJ_PICTURE_DATA);
+				BufferedImage bi = ImageIO.read(ImageIO.createImageInputStream(new ByteArrayInputStream(rawImage)));
+				String fileName = this.getTitle().toLowerCase();
+				fileName.replaceAll(" ", "_");
+				File file = new File(LiteModMCPlayer.coverDirectory.getPath() + "/" + fileName + ".png");
+				System.out.println(" File path: " + file.getAbsolutePath());
+				file.createNewFile();
+				ImageIO.write(bi, "png", file);
+				this.cover = bi;
+			}
+			// else
+				// TODO return the cover
+
+			/*byte[] rawImage = f.getTag().getFirstField(FieldKey.COVER_ART).getRawContent();
+
+			InputStream inputStream = new ByteArrayInputStream(rawImage);
+			BufferedImage bufferedImage = ImageIO.read(inputStream);
+			ImageIO.write(bufferedImage, "png", new File("mcplayer/covers/cover.png"));*/
 		}
 		catch (UnsupportedEncodingException e)
 		{

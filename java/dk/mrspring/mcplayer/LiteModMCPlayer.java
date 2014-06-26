@@ -32,6 +32,9 @@ public class LiteModMCPlayer implements Tickable//, Configurable
     public static List<String> extensions = new ArrayList<String>();
     private int timer = 0, index = 0;
 	private boolean hasInitialised = false;
+	private boolean hasCreatedBaseDirectory = false;
+	public static File baseDirectory;
+	public static File coverDirectory;
 
     @Override
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
@@ -81,6 +84,15 @@ public class LiteModMCPlayer implements Tickable//, Configurable
 
         System.out.println("");
         System.out.println(" Found files:");
+
+		baseDirectory = new File("mcplayer");
+		coverDirectory = new File("mcplayer\\covers");
+
+		System.out.println(" Creating base directory");
+		baseDirectory.mkdir();
+
+		System.out.println(" Creating cover directory");
+		coverDirectory.mkdirs();
 
         for(MusicFile file : allFiles)
         {

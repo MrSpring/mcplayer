@@ -72,6 +72,9 @@ public class PlayerOverlay
 		// minecraft.getTextureManager().bindTexture(playlist.get(index).getCoverLocation());
 		playlist.get(index).getCover();
 
+		int i = glGenTextures();
+		glBindTexture(GL_TEXTURE_2D, i);
+
 
 		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
 

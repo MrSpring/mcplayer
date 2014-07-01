@@ -1,7 +1,7 @@
 package dk.mrspring.mcplayer.file;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
-import net.minecraft.client.resources.DefaultResourcePack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -13,13 +13,15 @@ import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.datatype.DataTypes;
 import org.jaudiotagger.tag.id3.ID3v23Frame;
-import org.jaudiotagger.tag.id3.ID3v23Tag;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
-import org.jaudiotagger.tag.images.Artwork;
+import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Konrad on 25-06-2014.
@@ -38,6 +40,7 @@ public class MusicFile
     protected String artist = "UNTITLED";
 	protected ResourceLocation coverLocation = new ResourceLocation("mcplayer", "textures/cover/default.png");
 	protected BufferedImage cover;
+    protected int textureId = -1;
 
     public MusicFile(File base)
     {
@@ -79,25 +82,36 @@ public class MusicFile
 		return this.coverLocation;
 	}
 
-	public void getCover()
+	public void loadCover()
 	{
 		try
 		{
-			if (this.cover == null)
-			{
-				AudioFile f = AudioFileIO.read(this.baseFile);
-				TagField coverArtField = f.getTag().getFirstField(FieldKey.COVER_ART);
-				FrameBodyAPIC body = (FrameBodyAPIC) ((ID3v23Frame) coverArtField).getBody();
-				byte[] rawImage = (byte[]) body.getObjectValue(DataTypes.OBJ_PICTURE_DATA);
-				BufferedImage bi = ImageIO.read(ImageIO.createImageInputStream(new ByteArrayInputStream(rawImage)));
-				String fileName = this.getTitle().toLowerCase();
-				fileName.replaceAll(" ", "_");
-				File file = new File(LiteModMCPlayer.coverDirectory.getPath() + "/" + fileName + ".png");
-				System.out.println(" File path: " + file.getAbsolutePath());
-				file.createNewFile();
-				ImageIO.write(bi, "png", file);
-				this.cover = bi;
-			}
+            System.out.println(" Test");
+
+            String fileName = this.getTitle().toLowerCase();
+            File file = new File(LiteModMCPlayer.coverDirectory.getPath() + "/" + fileName + ".png");
+
+            if (file.exists())
+            {
+                this.cover = ImageIO.read(file);
+            }
+            else
+            {
+                AudioFile f = AudioFileIO.read(this.baseFile);
+                TagField coverArtField = f.getTag().getFirstField(FieldKey.COVER_ART);
+                FrameBodyAPIC body = (FrameBodyAPIC) ((ID3v23Frame) coverArtField).getBody();
+                byte[] rawImage = (byte[]) body.getObjectValue(DataTypes.OBJ_PICTURE_DATA);
+                BufferedImage bi = ImageIO.read(ImageIO.createImageInputStream(new ByteArrayInputStream(rawImage)));
+                System.out.println(" File path: " + file.getAbsolutePath());
+                file.createNewFile();
+                System.out.println(" Creating new File, name: " + file.toString());
+                this.cover = bi;
+                ImageIO.write(bi, "png", file);
+            }
+
+
+            this.textureId = TextureLoader.loadTexture(this.cover);
+
 			// else
 				// TODO return the cover
 
@@ -128,7 +142,28 @@ public class MusicFile
 		}
 	}
 
-	public String getArtistFromTag()
+    public BufferedImage getCover()
+    {
+        if (this.cover == null)
+            this.loadCover();
+
+        return this.cover;
+    }
+
+    public void bindCover(Minecraft minecraft)
+    {
+        if (this.cover == null)
+            this.loadCover();
+
+        if (this.textureId != -1)
+        {
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.textureId);
+        }
+        else
+            minecraft.getTextureManager().bindTexture(new ResourceLocation("mcplayer", "textures/cover/default.png"));
+    }
+
+    public String getArtistFromTag()
     {
         try
         {

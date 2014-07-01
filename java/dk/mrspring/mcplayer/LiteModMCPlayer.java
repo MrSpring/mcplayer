@@ -1,23 +1,16 @@
 package dk.mrspring.mcplayer;
 
-import com.mumfrey.liteloader.Configurable;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
-import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.gui.overlay.PlayerOverlay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
-import sun.awt.image.PNGImageDecoder;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +73,7 @@ public class LiteModMCPlayer implements Tickable//, Configurable
         extensions.add(".wav");
 
 		LiteLoader.getInput().registerKeyBinding(sizeToggler);
-        FileLoader.addFiles("C:\\Users\\Konrad\\SkyDrive\\Music", extensions, allFiles);
+        FileLoader.addFiles("E:\\Music", extensions, allFiles);
 
         System.out.println("");
         System.out.println(" Found files:");
@@ -99,7 +92,7 @@ public class LiteModMCPlayer implements Tickable//, Configurable
             System.out.println(file.getTitle());
         }
 
-		allFiles.get(0).getCover();
+		allFiles.get(0).loadCover();
 
 		hasInitialised = true;
 	}

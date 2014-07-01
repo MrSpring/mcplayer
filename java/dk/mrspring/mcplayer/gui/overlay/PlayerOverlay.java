@@ -36,8 +36,6 @@ public class PlayerOverlay
 
 	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, int index, Playlist<MusicFile> playlist)
 	{
-		System.out.println(" Playlist size: " + playlist.size());
-
         song = playlist.get(index).getTitle();
         album = playlist.get(index).getAlbum();
         artist = playlist.get(index).getArtist();
@@ -70,13 +68,12 @@ public class PlayerOverlay
 
 
 		// minecraft.getTextureManager().bindTexture(playlist.get(index).getCoverLocation());
-		playlist.get(index).getCover();
+        playlist.get(index).bindCover(minecraft);
 
-		int i = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, i);
+        glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
 
-
-		glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
+        /*if (textureId != -1)
+            glDeleteTextures(textureId);*/
 
 		if (additionalWidth == oldAdditionalWidth && !isSmall)
 		{

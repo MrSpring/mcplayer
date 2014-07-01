@@ -56,6 +56,11 @@ public class MusicFile
                 this.type = WAV;
     }
 
+    public File getBaseFile()
+    {
+        return this.baseFile;
+    }
+
     public String getStringField(FieldKey key) throws IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException, CannotReadException
     {
         AudioFile f = AudioFileIO.read(this.baseFile);

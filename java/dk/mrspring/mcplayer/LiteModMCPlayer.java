@@ -6,6 +6,7 @@ import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.gui.overlay.PlayerOverlay;
+import dk.mrspring.mcplayer.player.PlayerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
@@ -28,6 +29,8 @@ public class LiteModMCPlayer implements Tickable//, Configurable
 	private boolean hasCreatedBaseDirectory = false;
 	public static File baseDirectory;
 	public static File coverDirectory;
+    public static int globalTimeRunning = 0;
+    public static PlayerThread thread;
 
     @Override
 	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
@@ -37,6 +40,7 @@ public class LiteModMCPlayer implements Tickable//, Configurable
 		if (hasInitialised)
 		{
 			timer++;
+            globalTimeRunning++;
 			if (timer > 160)
 			{
 				index++;
@@ -47,6 +51,9 @@ public class LiteModMCPlayer implements Tickable//, Configurable
 			if (sizeToggler.isPressed())
 				isSmall = !isSmall;
 			PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, index, allFiles);
+
+            if (globalTimeRunning == 50)
+                thread.run = false;
 		}
 	}
 
@@ -68,6 +75,9 @@ public class LiteModMCPlayer implements Tickable//, Configurable
 	public void init(File configPath)
 	{
 		// TODO Config and stuffz
+
+        thread = new PlayerThread();
+        thread.start();
 
 		extensions.add(".mp3");
         extensions.add(".wav");
@@ -92,7 +102,7 @@ public class LiteModMCPlayer implements Tickable//, Configurable
             System.out.println(file.getTitle());
         }
 
-		allFiles.get(0).loadCover();
+        thread.setQueue(allFiles);
 
 		hasInitialised = true;
 	}

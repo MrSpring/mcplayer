@@ -8,3 +8,5 @@ You are free to look around the code and maybe pop in with a pull request/issue 
 Here's a preview. Looks pretty snazzy so far, ey. ;)
 
 ![Preview](http://mrspring.dk/mc-music-player/preview/preview01.png)
+
+Link to album showed in the image: [In Real Life](https://itunes.apple.com/us/album/in-real-life/id692264114)

@@ -1,118 +1,42 @@
 package dk.mrspring.mcplayer;
 
 import com.mumfrey.liteloader.Tickable;
-import com.mumfrey.liteloader.core.LiteLoader;
-import dk.mrspring.mcplayer.file.FileLoader;
-import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.list.Playlist;
-import dk.mrspring.mcplayer.gui.overlay.PlayerOverlay;
-import dk.mrspring.mcplayer.player.PlayerThread;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import org.lwjgl.input.Keyboard;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by MrSpring on 24-06-14 for MC Music Player.
  */
-public class LiteModMCPlayer implements Tickable//, Configurable
+public class LiteModMCPlayer implements Tickable
 {
-	private static KeyBinding sizeToggler = new KeyBinding("key.mcplayer.toggle_size", Keyboard.KEY_F12, "key.categories.litemods");
-	public static boolean isSmall = false;
-    private Playlist<MusicFile> allFiles = new Playlist<MusicFile>("mcplayer.list.all");
-    public static List<String> extensions = new ArrayList<String>();
-    private int timer = 0, index = 0;
-	private boolean hasInitialised = false;
-	private boolean hasCreatedBaseDirectory = false;
-	public static File baseDirectory;
-	public static File coverDirectory;
-    public static int globalTimeRunning = 0;
-    public static PlayerThread thread;
+    @Override
+    public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
+    {
+
+    }
 
     @Override
-	public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
-	{
-		// TODO GUIs and stuffz
+    public String getName()
+    {
+        return "MC Player Mod";
+    }
 
-		if (hasInitialised)
-		{
-			timer++;
-            globalTimeRunning++;
-			if (timer > 160)
-			{
-				index++;
-				if (index > allFiles.size())
-					index = 0;
-				timer = 0;
-			}
-			if (sizeToggler.isPressed())
-				isSmall = !isSmall;
-			PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, index, allFiles);
+    @Override
+    public String getVersion()
+    {
+        return "0.1.0-BETA";
+    }
 
-            if (globalTimeRunning == 50)
-                thread.run = false;
-		}
-	}
+    @Override
+    public void init(File configPath)
+    {
 
-	@Override
-	public String getName()
-	{
-		return ModInfo.name;
-	}
+    }
 
+    @Override
+    public void upgradeSettings(String version, File configPath, File oldConfigPath)
+    {
 
-
-	@Override
-	public String getVersion()
-	{
-		return ModInfo.version;
-	}
-
-	@Override
-	public void init(File configPath)
-	{
-		// TODO Config and stuffz
-
-        thread = new PlayerThread();
-        thread.start();
-
-		extensions.add(".mp3");
-        extensions.add(".wav");
-
-		LiteLoader.getInput().registerKeyBinding(sizeToggler);
-        FileLoader.addFiles("E:\\Music", extensions, allFiles);
-
-        System.out.println("");
-        System.out.println(" Found files:");
-
-		baseDirectory = new File("mcplayer");
-		coverDirectory = new File("mcplayer\\covers");
-
-		System.out.println(" Creating base directory");
-		baseDirectory.mkdir();
-
-		System.out.println(" Creating cover directory");
-		coverDirectory.mkdirs();
-
-        for(MusicFile file : allFiles)
-        {
-            System.out.println(file.getTitle());
-        }
-
-        thread.setQueue(allFiles);
-
-		hasInitialised = true;
-	}
-
-	@Override
-	public void upgradeSettings(String version, File configPath, File oldConfigPath) { }
-/*
-	@Override
-	public Class<? extends ConfigPanel> getConfigPanelClass()
-	{
-		return MCPlayerConfigPanel.class;
-	}*/
+    }
 }

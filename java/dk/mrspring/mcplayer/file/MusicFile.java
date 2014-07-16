@@ -169,6 +169,6 @@ public class MusicFile
         if (this.artist.equals("UNTITLED"))
             this.artist = this.getField(FieldKey.ARTIST);
 
-        return this.album;
+        return this.artist;
     }
 }

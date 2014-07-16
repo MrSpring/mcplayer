@@ -3,7 +3,10 @@ package dk.mrspring.mcplayer;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import dk.mrspring.mcplayer.file.FileLoader;
+import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
+import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
@@ -21,13 +24,24 @@ public class LiteModMCPlayer implements Tickable
 
     public static File coverLocation = new File("mcplayer\\covers");
 
-    public static Playlist allFiles = new Playlist("ALL_FILES");
+    private boolean isSmall = false;
+
+    public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
     public static List<String> supportedExtensions = new ArrayList<String>();
+    public static MusicManagerThread thread;
+
+    public MusicManagerThread getManager()
+    {
+        return thread;
+    }
 
     @Override
     public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
     {
+        if (sizeToggler.isPressed())
+            isSmall =! isSmall;
 
+        PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, thread.getCurrentlyPlaying(), thread.getNextInQueue());
     }
 
     @Override
@@ -52,6 +66,9 @@ public class LiteModMCPlayer implements Tickable
         supportedExtensions.add(".mp3");
 
         FileLoader.addFiles("E:\\Music", supportedExtensions, allFiles);
+
+        thread = new MusicManagerThread(allFiles);
+        thread.start();
     }
 
     @Override

@@ -1,8 +1,8 @@
 package dk.mrspring.mcplayer.thread;
 
-import com.sun.istack.internal.NotNull;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.list.Playlist;
+import javafx.util.Duration;
 
 /**
  * Created by Konrad on 02-07-2014.
@@ -20,16 +20,219 @@ public class MusicManagerThread extends Thread
     public static final int SCHEDULED_FOR_NEXT = 5;
     public static final int SCHEDULED_FOR_PREV = 6;
 
+    public int state = NOT_INITIALIZED;
+    public double volume = 1.0;
+    public double oldVolume = volume;
+
+    public MusicFile currentlyPlaying;
+    public MusicFile nextInQueue;
+
+    public boolean running = true;
+    public MusicPlayerThread player;
+
+    public MusicManagerThread(Playlist<MusicFile> filesToPlay)
+    {
+        this.queue = filesToPlay;
+    }
+
+    @Override
+    public void run()
+    {
+        while (this.running)
+        {
+            this.currentlyPlaying = this.queue.get(0);
+            this.nextInQueue = this.queue.get(1);
+
+            if (this.volume != this.oldVolume)
+                this.player.setVolume(this.volume);
+
+            switch (this.state)
+            {
+                case NOT_INITIALIZED: this.initialize(); break;
+                case NOT_PLAYING: this.play(this.queue.get(0)); break;
+                case PLAYING: break;
+                case PAUSED: break;
+                case FINISHED: this.playInQueue(1); break;
+                case STOPPED: this.running = false; break;
+                case SCHEDULED_FOR_NEXT: this.playInQueue(1); break;
+                case SCHEDULED_FOR_PREV: this.playInQueue(-1);break;
+            }
+            this.oldVolume = this.volume;
+        }
+
+        this.player.stopPlaying();
+    }
+
+    public void initialize()
+    {
+        this.currentlyPlaying = this.queue.get(0);
+        this.nextInQueue = this.queue.get(1);
+        this.state = NOT_PLAYING;
+    }
+
+    public synchronized Duration stopCurrentPlayer()
+    {
+        if (this.player == null)
+        {
+            //this.state = STOPPED;
+            return new Duration(0);
+        }
+        else
+        {
+            //this.state = STOPPED;
+            return this.player.stopPlaying();
+        }
+    }
+
+    public synchronized void playInQueue(int toSkip)
+    {
+        this.playInQueue(toSkip, new Duration(0));
+    }
+
+    public synchronized void playInQueue(int toSkip, Duration startPosition)
+    {
+        if (toSkip == 0)
+            this.play(this.queue.get(0), startPosition);
+
+        if (toSkip > 0)
+        {
+            for (int i = 0; i < toSkip; i++)
+            {
+                MusicFile file = this.queue.remove(0);
+                this.queue.add(file);
+            }
+        } else
+        {
+            for (int i = 0; i > toSkip; i--)
+            {
+                MusicFile file = this.queue.remove(this.queue.size() - 1);
+                this.queue.add(0, file);
+            }
+        }
+
+        this.play(this.queue.get(0), startPosition);
+    }
+
+    private synchronized void play(MusicFile file)
+    {
+        this.play(file, new Duration(0));
+    }
+
+    private synchronized void play(MusicFile file, Duration startPosition)
+    {
+        if (this.player != null)
+            this.stopCurrentPlayer();
+
+        this.player = new MusicPlayerThread(file.getBaseFile(), startPosition);
+        this.player.start();
+        this.state = PLAYING;
+    }
+
+    public synchronized boolean pauseMusic()
+    {
+        if (this.player != null && this.state != PAUSED)
+        {
+            this.player.pausePlaying();
+            this.state = PAUSED;
+            return true;
+        }
+        else return false;
+    }
+
+    public synchronized boolean resumeMusic()
+    {
+        if (this.player != null && this.state != PLAYING)
+        {
+            this.player.resumePlaying();
+            this.state = PLAYING;
+            return true;
+        }
+        else return false;
+    }
+
+    public synchronized void scheduleNext()
+    {
+        this.state = SCHEDULED_FOR_NEXT;
+    }
+
+    public synchronized void schedulePrev()
+    {
+        this.state = SCHEDULED_FOR_PREV;
+    }
+
+    public synchronized void stopMusic()
+    {
+        this.state = STOPPED;
+    }
+
+    public boolean isStopped()
+    {
+        return this.running;
+    }
+
+    public synchronized void onPlayerDonePlaying()
+    {
+        this.state = FINISHED;
+    }
+
+    public void setVolume(double volume)
+    {
+        this.volume = volume;
+    }
+
+    public Duration getPosition()
+    {
+        if (this.player != null)
+            return this.player.getPosition();
+        else return Duration.ZERO;
+    }
+
+    public Duration getLength()
+    {
+        return this.player.getMediaLength();
+    }
+
+    public synchronized void togglePausePlay()
+    {
+        if (this.state == PAUSED)
+            this.resumeMusic();
+        else if (this.state == PLAYING)
+            this.pauseMusic();
+    }
+
+    // CLIENT RENDERING STUFFZ!
+
+    public MusicFile getCurrentlyPlaying()
+    {
+        return this.currentlyPlaying;
+    }
+
+    public MusicFile getNextInQueue()
+    {
+        return this.nextInQueue;
+    }
+
+    /*protected List<File> queue;
+
+    public static final int NOT_INITIALIZED = -1;
+    public static final int NOT_PLAYING = 0;
+    public static final int PLAYING = 1;
+    public static final int PAUSED= 2;
+    public static final int FINISHED = 3;
+    public static final int STOPPED = 4;
+    public static final int SCHEDULED_FOR_NEXT = 5;
+    public static final int SCHEDULED_FOR_PREV = 6;
+
     public Thread playerThread;
 
     public int playingState = NOT_INITIALIZED;
     public int currentPosition = 0;
 
     // USED IN CLIENT RENDERING FOR MC MOD!
-    public MusicFile currentlyPlaying;
-    public MusicFile nextInQueue;
+    public File currentlyPlaying;
+    public File nextInQueue;
 
-    public MusicManagerThread(Playlist<MusicFile> filesToPlay)
+    public PlayerThread(ArrayList<File> filesToPlay)
     {
         this.queue = filesToPlay;
         this.playingState = NOT_INITIALIZED;
@@ -112,17 +315,7 @@ public class MusicManagerThread extends Thread
             {
                 this.playInQueue(1);
             }*/
-        }
-    }
-
-    public MusicFile getCurrentlyPlaying()
-    {
-        return this.currentlyPlaying;
-    }
-
-    public MusicFile getNextInQueue()
-    {
-        return this.nextInQueue;
+        /*}
     }
 
     public synchronized void playInQueue(@NotNull int toSkip)
@@ -146,14 +339,14 @@ public class MusicManagerThread extends Thread
         {
             for (int i = 0; i < toSkip; i++)
             {
-                MusicFile file = this.queue.remove(0);
+                File file = this.queue.remove(0);
                 this.queue.add(file);
             }
         } else
         {
             for (int i = 0; i > toSkip; i--)
             {
-                MusicFile file = this.queue.remove(this.queue.size() - 1);
+                File file = this.queue.remove(this.queue.size() - 1);
                 this.queue.add(0, file);
             }
         }
@@ -161,17 +354,17 @@ public class MusicManagerThread extends Thread
         this.play(this.queue.get(0), startFrame, endFrame);
     }
 
-    public synchronized void play(@NotNull MusicFile musicFile)
+    public synchronized void play(@NotNull File musicFile)
     {
         this.play(musicFile, 0);
     }
 
-    public synchronized void play(@NotNull MusicFile musicFile, @NotNull int startFrame)
+    public synchronized void play(@NotNull File musicFile, @NotNull int startFrame)
     {
         this.play(musicFile, startFrame, Integer.MAX_VALUE);
     }
 
-    public synchronized void play(@NotNull MusicFile musicFile, @NotNull int startFrame, @NotNull int endFrame)
+    public synchronized void play(@NotNull File musicFile, @NotNull int startFrame, @NotNull int endFrame)
     {
         if (this.playerThread != null)
             if (((MusicPlayerThread) this.playerThread).isPlaying())
@@ -198,7 +391,7 @@ public class MusicManagerThread extends Thread
     {
         int fps = 26;
         ((MusicPlayerThread) this.playerThread).stopPlaying();
-        //Logger.logln("PAUSING AT " + this.currentPosition + "!");
+        Logger.logln("PAUSING AT " + this.currentPosition + "!");
         this.playingState = PAUSED;
     }
 

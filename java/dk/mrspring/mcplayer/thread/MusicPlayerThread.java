@@ -1,17 +1,100 @@
 package dk.mrspring.mcplayer.thread;
 
 import com.sun.istack.internal.NotNull;
-import dk.mrspring.mcplayer.file.MusicFile;
-import javazoom.jl.decoder.JavaLayerException;
+import dk.mrspring.mcplayer.LiteModMCPlayer;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
-import java.io.FileInputStream;
+import java.io.File;
 
 /**
  * Created by Konrad on 02-07-2014.
  */
 public class MusicPlayerThread extends Thread
 {
-    protected final MusicFile playing;
+    protected final File playing;
+    protected final Duration playFrom;
+
+    protected MediaPlayer player;
+
+    public MusicPlayerThread(@NotNull File toPlay)
+    {
+        this(toPlay, new Duration(0));
+    }
+
+    public MusicPlayerThread(@NotNull File toPlay, @NotNull Duration from)
+    {
+        this.playing = toPlay;
+        this.playFrom = from;
+
+        Media media = new Media(this.playing.toURI().toASCIIString());
+        this.player = new MediaPlayer(media);
+        this.player.setOnEndOfMedia(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                LiteModMCPlayer.thread.onPlayerDonePlaying();
+            }
+        });
+    }
+
+    @Override
+    public void run()
+    {
+        this.player.play();
+    }
+
+    public synchronized Duration getPosition()
+    {
+        if (this.player != null)
+            return this.player.getCurrentTime();
+        else return new Duration(0);
+    }
+
+    public synchronized void pausePlaying()
+    {
+        this.player.pause();
+    }
+
+    public synchronized void resumePlaying()
+    {
+        this.player.play();
+    }
+
+    public synchronized Duration stopPlaying()
+    {
+        Duration position = this.player.getCurrentTime();
+        this.player.stop();
+        return position;
+    }
+
+    public synchronized void setVolume(double volume)
+    {
+        this.player.setVolume(volume);
+        /*Duration duration = this.player.getCurrentTime();
+        this.player.stop();
+        Media media = new Media(this.playing.toURI().toASCIIString());
+        this.player = new MediaPlayer(media);
+        this.player.setStartTime(duration);
+        this.player.setOnEndOfMedia(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Main.thread.onPlayerDonePlaying();
+            }
+        });
+        this.player.play();*/
+    }
+
+    public synchronized Duration getMediaLength()
+    {
+        return this.player.getTotalDuration();
+    }
+
+    /*protected final File playing;
     protected int playFrom = 0;
     protected int playTo = Integer.MAX_VALUE;
     protected MusicPlayer player;
@@ -25,19 +108,19 @@ public class MusicPlayerThread extends Thread
 
     protected int state = NOT_INITIALIZED;
 
-    public MusicPlayerThread(@NotNull MusicFile file)
+    public MusicPlayerThread(@NotNull File file)
     {
         this(file, 0);
     }
 
-    public MusicPlayerThread(@NotNull MusicFile file, @NotNull int startFrame)
+    public MusicPlayerThread(@NotNull File file, @NotNull int startFrame)
     {
         this(file, startFrame, Integer.MAX_VALUE);
     }
 
-    public MusicPlayerThread(@NotNull MusicFile file, @NotNull int startFrame, @NotNull int endFrame)
+    public MusicPlayerThread(@NotNull File file, @NotNull int startFrame, @NotNull int endFrame)
     {
-        // Logger.logln("- Initialising new Player Thread, containing: " + file.toString() + ", from frame " + startFrame + ", to " + endFrame + ".");
+        Logger.logln("- Initialising new Player Thread, containing: " + file.toString() + ", from frame " + startFrame + ", to " + endFrame + ".");
 
         this.playing = file;
 
@@ -46,7 +129,7 @@ public class MusicPlayerThread extends Thread
 
         try
         {
-            FileInputStream fileInputStream = new FileInputStream(this.playing.getBaseFile());
+            FileInputStream fileInputStream = new FileInputStream(this.playing);
             this.player = new MusicPlayer(fileInputStream);
 
             this.state = INITIALIZED;

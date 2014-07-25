@@ -5,7 +5,7 @@ import dk.mrspring.mcplayer.list.Playlist;
 import javafx.util.Duration;
 
 /**
- * Created by Konrad on 02-07-2014.
+ * Created by Konrad on 02-07-2014 for MC Music Player.
  */
 public class MusicManagerThread extends Thread
 {
@@ -211,6 +211,11 @@ public class MusicManagerThread extends Thread
     {
         return this.nextInQueue;
     }
+
+	public boolean isPaused()
+	{
+		return this.state == PAUSED;
+	}
 
     /*protected List<File> queue;
 

@@ -1,6 +1,7 @@
 package dk.mrspring.mcplayer.gui;
 
-import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.LiteModMCPlayer;
+import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -14,10 +15,6 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class PlayerOverlay
 {
-    public static float alpha = 0.5F;
-
-    private static final ResourceLocation COVER_ART = new ResourceLocation("mcplayer", "textures/cover/cover.png");
-
     private static float originX = 5F;
     private static float originY = 5F;
 
@@ -29,15 +26,13 @@ public class PlayerOverlay
     private static float additionalWidth = 0F;
     private static float oldAdditionalWidth = additionalWidth;
 
-    private static String song = "UNTITLED";
-    private static String album = "UNTITLED";
-    private static String artist = "UNTITLED";
+	private static float nextUpHeight = 0F;
 
-    public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, MusicFile currentlyPlaying, MusicFile nextUp)
+	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, MusicManagerThread thread)
     {
-        song = currentlyPlaying.getTitle();
-        album = currentlyPlaying.getAlbum();
-        artist = currentlyPlaying.getArtist();
+		String song = thread.getCurrentlyPlaying().getTitle();
+		String album = thread.getCurrentlyPlaying().getAlbum();
+		String artist = thread.getCurrentlyPlaying().getArtist();
 
         int songWidth = fontRenderer.getStringWidth(song);
         int albumWidth = fontRenderer.getStringWidth(album);
@@ -63,13 +58,56 @@ public class PlayerOverlay
 		if (!isSmall && additionalWidth < titleWidth + 10)
 			additionalWidth += 5F;*/
 
-        glDrawRect(5F, 5F, (width + additionalWidth), height, ReadableColor.BLACK, alpha);
+        glDrawRect(5F, 5F, (width + additionalWidth), height, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 
 
         // minecraft.getTextureManager().bindTexture(file.getCoverLocation());
-        currentlyPlaying.bindCover(minecraft);
+		thread.getCurrentlyPlaying().bindCover(minecraft);
 
-        glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512);
+        glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
+
+		if (thread.isPaused())
+		{
+			minecraft.getTextureManager().bindTexture(new ResourceLocation("mcplayer", "textures/overlay/pause_overlay.png"));
+			glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
+		}
+
+		try
+		{
+			double progressThroughSong = thread.getPosition().toMillis() / thread.getLength().toMillis();
+			float progressBerHeight = 2.5F;
+			glDrawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, ReadableColor.CYAN, 1F);
+
+			String nextTitle = thread.getNextInQueue().getTitle();
+			String nextArtist = thread.getNextInQueue().getArtist();
+
+			int nextUpWidth = fontRenderer.getStringWidth(nextTitle + " by " + nextArtist);
+
+			if (nextUpHeight != 0F)
+			{
+				glDrawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				glDrawRect(5F, 5F + height, nextUpWidth + 10, 1F, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+			}
+
+			System.out.println(" Current through song: " + progressThroughSong + ", showing at: " + LiteModMCPlayer.config.getNextUpDecimal());
+
+			if (progressThroughSong > LiteModMCPlayer.config.getNextUpDecimal())
+			{
+				if (nextUpHeight == 30F)
+				{
+					fontRenderer.drawString("Next Up:", 5 + 5, 5 + 80 + 5, 0xFFFFFF, true);
+					fontRenderer.drawString(nextTitle, 5 + 5, 5 + 80 + 16, 0xFFFFFF, true);
+					fontRenderer.drawString(" by " + nextArtist, 5 + 5 + fontRenderer.getStringWidth(nextTitle), 5 + 80 + 16, 0xBBBBBB, true);
+				}
+
+				if (nextUpHeight < 30F)
+					nextUpHeight += 1F;
+			}
+			else if (nextUpHeight > 0F) nextUpHeight -= 1F;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
         /*if (textureId != -1)
             glDeleteTextures(textureId);*/
@@ -77,8 +115,8 @@ public class PlayerOverlay
         if (additionalWidth == oldAdditionalWidth && !isSmall)
         {
             fontRenderer.drawString(song, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
-            fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xCCCCCC, true);
-            fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xCCCCCC, true);
+            fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xBBBBBB, true);
+            fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xBBBBBB, true);
         }
 
         oldAdditionalWidth = additionalWidth;
@@ -105,13 +143,13 @@ public class PlayerOverlay
         glDisable(GL_BLEND);
     }
 
-    private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2)
+    private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2, float alpha)
     {
         glDisable(GL_LIGHTING);
-        glDisable(GL_BLEND);
+		glEnable(GL_BLEND);
         glAlphaFunc(GL_GREATER, 0.01F);
         glEnable(GL_TEXTURE_2D);
-        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glColor4f(1.0F, 1.0F, 1.0F, alpha);
 
         float texMapScale = 0.001953125F;
 
@@ -122,5 +160,7 @@ public class PlayerOverlay
         tessellator.addVertexWithUV(x + width, y + 0,      0, u2 * texMapScale, v  * texMapScale);
         tessellator.addVertexWithUV(x + 0,     y + 0,      0, u  * texMapScale, v  * texMapScale);
         tessellator.draw();
+
+		glDisable(GL_BLEND);
     }
 }

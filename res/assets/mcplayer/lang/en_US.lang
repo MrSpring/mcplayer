@@ -1,4 +1,7 @@
 key.mcplayer.toggle_size=Toggle Overlay Size
+key.mcplayer.pause_play=Pause/Play Music
+key.mcplayer.play_next=Skip to next song in Queue
+key.mcplayer.play_prev=Skip to the previous song in Queue
 
 gui.mcplayer.toggle_overlay_size=Toggle Overlay Size
 gui.mcplayer.overlay_transparency=Overlay Transparency

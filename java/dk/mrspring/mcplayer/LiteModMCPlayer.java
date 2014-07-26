@@ -2,10 +2,13 @@ package dk.mrspring.mcplayer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mumfrey.liteloader.Configurable;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
+import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
@@ -19,25 +22,22 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by MrSpring on 24-06-14 for MC Music Player.
  */
-public class LiteModMCPlayer implements Tickable
+public class LiteModMCPlayer implements Tickable, Configurable
 {
-	public static Config config;
+	public static ModConfig config;
     private static KeyBinding sizeToggler = new KeyBinding("key.mcplayer.toggle_size", Keyboard.KEY_F12, "key.categories.litemods");
     private static KeyBinding pausePlay = new KeyBinding("key.mcplayer.pause_play", Keyboard.KEY_P, "key.categories.litemods");
 	private static KeyBinding playNext = new KeyBinding("key.mcplayer.play_next", Keyboard.KEY_RIGHT, "key.categories.litemods");
 	private static KeyBinding playPrev = new KeyBinding("key.mcplayer.play_prev", Keyboard.KEY_LEFT, "key.categories.litemods");
 
     public static File coverLocation = new File("mcplayer/covers");
+    public static File configFile;
 
     public static boolean isPlaying = true;
-
-    private boolean isSmall = false;
 
     public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
     public static List<String> supportedExtensions = new ArrayList<String>();
@@ -47,7 +47,7 @@ public class LiteModMCPlayer implements Tickable
     public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
     {
         if (sizeToggler.isPressed())
-            isSmall =! isSmall;
+            config.toggleOverlaySize();
         if (pausePlay.isPressed())
             thread.togglePausePlay();
 		if (playNext.isPressed())
@@ -55,7 +55,7 @@ public class LiteModMCPlayer implements Tickable
 		if (playPrev.isPressed())
 			thread.schedulePrev();
 
-        PlayerOverlay.render(minecraft.fontRenderer, isSmall, minecraft, thread);
+        PlayerOverlay.render(minecraft.fontRenderer, !config.getOverlaySize(), minecraft, thread);
     }
 
     @Override
@@ -73,10 +73,9 @@ public class LiteModMCPlayer implements Tickable
     @Override
     public void init(File configPath)
     {
-		config = new Config();
+		config = new ModConfig();
 
-		File configFile = new File(configPath.getAbsolutePath() + "\\MC Music Player.json");
-		System.out.println(" Path to Config: " + configFile.getAbsolutePath());
+		configFile = new File(configPath.getAbsolutePath() + "\\MC Music Player.json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		if (configFile.exists())
@@ -84,7 +83,7 @@ public class LiteModMCPlayer implements Tickable
 			try
 			{
 				BufferedReader reader = new BufferedReader(new FileReader(configFile));
-				config = gson.fromJson(reader, Config.class);
+				config = gson.fromJson(reader, ModConfig.class);
 			} catch (FileNotFoundException e)
 			{
 				e.printStackTrace();
@@ -132,7 +131,8 @@ public class LiteModMCPlayer implements Tickable
 
         supportedExtensions.add(".mp3");
 
-        FileLoader.addFiles("C:\\Users\\Konrad\\SkyDrive\\Music", supportedExtensions, allFiles);
+        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+        System.out.println(" Music Path: " + config.music_path);
 
         thread = new MusicManagerThread(allFiles);
         thread.start();
@@ -142,5 +142,23 @@ public class LiteModMCPlayer implements Tickable
     public void upgradeSettings(String version, File configPath, File oldConfigPath)
     {
 
+    }
+
+    public static void reloadMusic()
+    {
+        allFiles = new Playlist<MusicFile>("ALL_FILES");
+        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+
+        if (thread.running)
+            thread.stopMusic();
+
+        thread = new MusicManagerThread(allFiles);
+        thread.start();
+    }
+
+    @Override
+    public Class<? extends ConfigPanel> getConfigPanelClass()
+    {
+        return MCPlayerConfigPanel.class;
     }
 }

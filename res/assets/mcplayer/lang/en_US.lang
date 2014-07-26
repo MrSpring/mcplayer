@@ -1,1 +1,7 @@
 key.mcplayer.toggle_size=Toggle Overlay Size
+
+gui.mcplayer.toggle_overlay_size=Toggle Overlay Size
+gui.mcplayer.overlay_transparency=Overlay Transparency
+gui.mcplayer.next_up_percentage=Percent through song before showing "Next Up"
+gui.mcplayer.music_location=Path to Music Directory
+gui.mcplayer.reload_music=Reload Music

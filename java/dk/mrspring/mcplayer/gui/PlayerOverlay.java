@@ -89,8 +89,6 @@ public class PlayerOverlay
 				glDrawRect(5F, 5F + height, nextUpWidth + 10, 1F, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 			}
 
-			System.out.println(" Current through song: " + progressThroughSong + ", showing at: " + LiteModMCPlayer.config.getNextUpDecimal());
-
 			if (progressThroughSong > LiteModMCPlayer.config.getNextUpDecimal())
 			{
 				if (nextUpHeight == 30F)

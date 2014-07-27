@@ -9,6 +9,7 @@ public class ModConfig
 	public int percent_before_showing_next_up = 90;
     public boolean overlay_size = true;
     public String music_path = System.getProperty("user.home") + "\\Music";
+	public double volume = 1;
 
 	public float getOverlayAlpha()
 	{
@@ -67,4 +68,14 @@ public class ModConfig
     {
         this.overlay_transparency = value;
     }
+
+	public double getVolume()
+	{
+		return this.volume;
+	}
+
+	public void setVolume(double volume)
+	{
+		this.volume = volume;
+	}
 }

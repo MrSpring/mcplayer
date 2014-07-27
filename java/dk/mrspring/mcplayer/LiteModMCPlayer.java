@@ -8,6 +8,7 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.GuiScreenMusicManager;
 import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
@@ -33,11 +34,10 @@ public class LiteModMCPlayer implements Tickable, Configurable
     private static KeyBinding pausePlay = new KeyBinding("key.mcplayer.pause_play", Keyboard.KEY_P, "key.categories.litemods");
 	private static KeyBinding playNext = new KeyBinding("key.mcplayer.play_next", Keyboard.KEY_RIGHT, "key.categories.litemods");
 	private static KeyBinding playPrev = new KeyBinding("key.mcplayer.play_prev", Keyboard.KEY_LEFT, "key.categories.litemods");
+	private static KeyBinding openGui = new KeyBinding("key.mcplayer.open_gui", Keyboard.KEY_G, "key.categories.litemods");
 
     public static File coverLocation = new File("mcplayer/covers");
     public static File configFile;
-
-    public static boolean isPlaying = true;
 
     public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
     public static List<String> supportedExtensions = new ArrayList<String>();
@@ -54,6 +54,10 @@ public class LiteModMCPlayer implements Tickable, Configurable
 			thread.scheduleNext();
 		if (playPrev.isPressed())
 			thread.schedulePrev();
+		if (openGui.isPressed())
+			Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager());
+
+		thread.setVolume(config.getVolume());
 
         PlayerOverlay.render(minecraft.fontRenderer, !config.getOverlaySize(), minecraft, thread);
     }
@@ -126,6 +130,7 @@ public class LiteModMCPlayer implements Tickable, Configurable
         LiteLoader.getInput().registerKeyBinding(pausePlay);
 		LiteLoader.getInput().registerKeyBinding(playNext);
 		LiteLoader.getInput().registerKeyBinding(playPrev);
+		LiteLoader.getInput().registerKeyBinding(openGui);
 
         coverLocation.mkdirs();
 

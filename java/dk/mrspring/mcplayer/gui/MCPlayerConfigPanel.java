@@ -44,7 +44,7 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
         this.musicPath = new GuiTextField(Minecraft.getMinecraft().fontRenderer, 2, 120, 200, 20);
         this.musicPath.setText(LiteModMCPlayer.config.getMusicPath());
         this.reloadMusic = new GuiButton(0, 1, 141, StatCollector.translateToLocal("gui.mcplayer.reload_music"));
-        this.volumeSlider = new GuiSlider(1, 170, "Volume");
+        this.volumeSlider = new GuiSlider(10, 171, "Volume", LiteModMCPlayer.config.getVolume());
     }
 
     @Override
@@ -88,6 +88,7 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
         this.musicPath.drawTextBox();
         this.reloadMusic.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
         this.volumeSlider.drawSlider(Minecraft.getMinecraft(), mouseX, mouseY);
+		LiteModMCPlayer.config.setVolume(this.volumeSlider.getValue());
     }
 
     @Override

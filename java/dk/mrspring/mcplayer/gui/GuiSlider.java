@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.gui;
 
+import com.sun.org.apache.regexp.internal.recompile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
@@ -12,10 +13,11 @@ public class GuiSlider extends GuiButton
     private double value = 1;
     public boolean isClicked = false;
 
-    public GuiSlider(int posX, int posY, String title)
+    public GuiSlider(int posX, int posY, String title, double defaultValue)
     {
         super(0, posX, posY, 150, 20, title);
         this.enabled = false;
+		this.value = defaultValue;
     }
 
     @Override
@@ -41,7 +43,13 @@ public class GuiSlider extends GuiButton
         {
             double xValue = mouseX - this.field_146128_h;
             xValue /= field_146120_f;
-            this.value = xValue;
+
+			if (xValue > 1)
+				this.value = 1;
+			else if (xValue < 0)
+				this.value = 0;
+			else
+	            this.value = xValue;
         }
     }
 
@@ -57,11 +65,16 @@ public class GuiSlider extends GuiButton
 
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-        if (this.isClicked && (this.field_146125_m && mouseX >= this.field_146128_h && mouseY >= this.field_146129_i && mouseX < this.field_146128_h + this.field_146120_f && mouseY < this.field_146129_i + this.field_146121_g))
+        if (this.isClicked)
             minecraft.fontRenderer.drawString(decimalFormat.format(this.value), mouseX, mouseY - 10, 0xFFFFFF, true);
     }
 
-    /*private double value;
+	public double getValue()
+	{
+		return this.value;
+	}
+
+	/*private double value;
     public boolean field_146135_o;
     private GameSettings.Options field_146133_q;
     private final float field_146132_r;

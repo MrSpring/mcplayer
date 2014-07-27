@@ -77,20 +77,26 @@ public class MusicFile
             File file = new File(LiteModMCPlayer.coverLocation.getAbsolutePath() + "/" + fileName);
 
             if (file.exists())
-                this.cover = ImageIO.read(file);
+			{
+				this.cover = ImageIO.read(file);
+				this.textureId = TextureLoader.loadTexture(this.cover);
+			}
             else
             {
                 AudioFile f = AudioFileIO.read(this.baseFile);
                 TagField coverArtField = f.getTag().getFirstField(FieldKey.COVER_ART);
-                FrameBodyAPIC bodyAPIC = (FrameBodyAPIC) ((ID3v23Frame) coverArtField).getBody();
-                byte[] rawImage = (byte[]) bodyAPIC.getObjectValue(DataTypes.OBJ_PICTURE_DATA);
-                BufferedImage bufferedImage = ImageIO.read(ImageIO.createImageInputStream(new ByteArrayInputStream(rawImage)));
-                file.createNewFile();
-                this.cover = bufferedImage;
-                ImageIO.write(bufferedImage, "png", file);
+				if (coverArtField != null)
+				{
+					FrameBodyAPIC bodyAPIC = (FrameBodyAPIC) ((ID3v23Frame) coverArtField).getBody();
+					byte[] rawImage = (byte[]) bodyAPIC.getObjectValue(DataTypes.OBJ_PICTURE_DATA);
+					BufferedImage bufferedImage = ImageIO.read(ImageIO.createImageInputStream(new ByteArrayInputStream(rawImage)));
+					file.createNewFile();
+					this.cover = bufferedImage;
+					ImageIO.write(bufferedImage, "png", file);
+					this.textureId = TextureLoader.loadTexture(this.cover);
+				}
             }
 
-            this.textureId = TextureLoader.loadTexture(this.cover);
         } catch(IOException e)
         {
             e.printStackTrace();

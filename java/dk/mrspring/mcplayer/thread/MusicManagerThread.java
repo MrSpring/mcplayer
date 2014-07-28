@@ -19,6 +19,7 @@ public class MusicManagerThread extends Thread
     public static final int STOPPED = 4;
     public static final int SCHEDULED_FOR_NEXT = 5;
     public static final int SCHEDULED_FOR_PREV = 6;
+	public static final int SCRUBBING = 7;
 
     public int state = NOT_INITIALIZED;
     public double volume = 1.0;
@@ -70,18 +71,22 @@ public class MusicManagerThread extends Thread
         this.state = NOT_PLAYING;
     }
 
+	public synchronized void resumeFrom(Duration from)
+	{
+		if (this.player != null && this.state == PAUSED)
+		{
+			this.player.stopPlaying();
+			this.player.resumePlaying(from);
+			this.state = PLAYING;
+		}
+	}
+
     public synchronized Duration stopCurrentPlayer()
     {
         if (this.player == null)
-        {
-            //this.state = STOPPED;
-            return new Duration(0);
-        }
+			return new Duration(0);
         else
-        {
-            //this.state = STOPPED;
-            return this.player.stopPlaying();
-        }
+			return this.player.stopPlaying();
     }
 
     public synchronized void playInQueue(int toSkip)
@@ -115,7 +120,7 @@ public class MusicManagerThread extends Thread
 
     private synchronized void play(MusicFile file)
     {
-        this.play(file, new Duration(0));
+        this.play(file, Duration.ZERO);
     }
 
     private synchronized void play(MusicFile file, Duration startPosition)

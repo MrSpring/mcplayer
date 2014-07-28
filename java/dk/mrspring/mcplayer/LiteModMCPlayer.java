@@ -55,11 +55,12 @@ public class LiteModMCPlayer implements Tickable, Configurable
 		if (playPrev.isPressed())
 			thread.schedulePrev();
 		if (openGui.isPressed())
-			Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager());
+			Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager(minecraft.currentScreen));
 
 		thread.setVolume(config.getVolume());
 
-        PlayerOverlay.render(minecraft.fontRenderer, !config.getOverlaySize(), minecraft, thread);
+		if (!(minecraft.currentScreen instanceof GuiScreenMusicManager))
+	        PlayerOverlay.render(minecraft.fontRenderer, !config.getOverlaySize(), minecraft, thread);
     }
 
     @Override

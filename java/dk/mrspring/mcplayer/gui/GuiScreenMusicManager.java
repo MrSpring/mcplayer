@@ -1,19 +1,83 @@
 package dk.mrspring.mcplayer.gui;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
+import org.lwjgl.util.ReadableColor;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.glDisable;
 
 /**
  * Created by MrSpring on 27-07-14 for MC Music Player.
  */
 public class GuiScreenMusicManager extends GuiScreen
 {
-	private MusicList musicList;
+	private final GuiScreen onExit;
+
+	GuiFancyButton button;
+
+	public GuiScreenMusicManager(GuiScreen previousScreen)
+	{
+		this.onExit = previousScreen;
+	}
+
+	@Override
+	public void initGui()
+	{
+		super.initGui();
+		this.button = new GuiFancyButton(5, 5, 50, 39, "gui.done");
+	}
+
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float par3)
+	{
+		super.drawScreen(mouseX, mouseY, par3);
+		glDrawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
+
+		glDrawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.25F);
+		glDrawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.25F);
+
+		glDrawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
+		glDrawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
+
+		this.button.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
+	}
+
+	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
+	{
+		glEnable(GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_CULL_FACE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
+
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.addVertex(x, y + height, 0);
+		tessellator.addVertex(x + width, y + height, 0);
+		tessellator.addVertex(x + width, y, 0);
+		tessellator.addVertex(x, y, 0);
+		tessellator.draw();
+
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+	}
+
+	@Override
+	protected void mouseClicked(int par1, int par2, int par3)
+	{
+		super.mouseClicked(par1, par2, par3);
+	}
+
+	/*private MusicList musicList;
 
 	@Override
 	public void initGui()
@@ -98,5 +162,5 @@ public class GuiScreenMusicManager extends GuiScreen
 		{
 			super.func_148128_a(par1, par2, par3);
 		}
-	}
+	}*/
 }

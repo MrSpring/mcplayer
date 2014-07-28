@@ -24,6 +24,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	GuiFancyButton button;
 	MusicList list;
 	MusicDetails details;
+	GuiMusicScrubber scrubber;
 	int detailWidth = 0;
 
 	public GuiScreenMusicManager(GuiScreen previousScreen)
@@ -38,6 +39,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.button = new GuiFancyButton(5, 5, 50, 39, "gui.done");
 		this.list = new MusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
+		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 30, true);
 	}
 
 	@Override
@@ -45,9 +47,6 @@ public class GuiScreenMusicManager extends GuiScreen
 	{
 		super.drawScreen(mouseX, mouseY, par3);
 		glDrawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
-
-		glDrawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.25F);
-		glDrawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.25F);
 
 		if (this.detailWidth > 0)
 			this.details.draw(this.mc);
@@ -68,10 +67,21 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.list.draw(this.mc, mouseX, mouseY);
 		this.details.draw(this.mc);
 
+
+		glDrawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
+		glDrawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
+
 		glDrawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
 		glDrawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
 
-		this.button.drawButton(this.mc, mouseX, mouseY);
+		//this.button.drawButton(this.mc, mouseX, mouseY);
+		this.scrubber.draw(this.mc, mouseX, mouseY);
+	}
+
+	@Override
+	protected void mouseClickMove(int p_146273_1_, int p_146273_2_, int p_146273_3_, long p_146273_4_)
+	{
+		super.mouseClickMove(p_146273_1_, p_146273_2_, p_146273_3_, p_146273_4_);
 	}
 
 	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)

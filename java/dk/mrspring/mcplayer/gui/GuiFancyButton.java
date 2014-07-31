@@ -40,18 +40,20 @@ public class GuiFancyButton extends Gui
 
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY)
 	{
-		ReadableColor color = ReadableColor.WHITE;
+		float alpha = 1;
 
 		if (!this.isEnabled())
-			color = ReadableColor.LTGREY;
+			alpha = 0.5F;
 
 		glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.25F);
 
-		glDrawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, 1F);
-		glDrawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, color, 1F);
 
-		glDrawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
-		glDrawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, color, 1F);
+
+		glDrawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, alpha);
+		glDrawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, alpha);
+
+		glDrawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
+		glDrawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
 
 		boolean isMouseHovering = mouseX >= this.posX && mouseY >= this.posY && mouseX < this.posX + this.width && mouseY < this.posY + this.height;
 		if (isMouseHovering && this.isEnabled())

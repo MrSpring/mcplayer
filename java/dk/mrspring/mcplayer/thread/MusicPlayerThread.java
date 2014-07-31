@@ -2,6 +2,7 @@ package dk.mrspring.mcplayer.thread;
 
 import com.sun.istack.internal.NotNull;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import dk.mrspring.mcplayer.file.MusicFile;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -13,22 +14,22 @@ import java.io.File;
  */
 public class MusicPlayerThread extends Thread
 {
-    protected final File playing;
+    protected final MusicFile playing;
     protected final Duration playFrom;
 
     protected MediaPlayer player;
 
-    public MusicPlayerThread(@NotNull File toPlay)
+    public MusicPlayerThread(@NotNull MusicFile toPlay)
     {
         this(toPlay, new Duration(0));
     }
 
-    public MusicPlayerThread(@NotNull File toPlay, @NotNull Duration from)
+    public MusicPlayerThread(@NotNull MusicFile toPlay, @NotNull Duration from)
     {
         this.playing = toPlay;
         this.playFrom = from;
 
-        Media media = new Media(this.playing.toURI().toASCIIString());
+        Media media = new Media(this.playing.getBaseFile().toURI().toASCIIString());
         this.player = new MediaPlayer(media);
         this.player.setOnEndOfMedia(new Runnable()
         {
@@ -61,7 +62,7 @@ public class MusicPlayerThread extends Thread
 
 	public synchronized void resumePlaying(Duration playFrom)
 	{
-		Media media = new Media(this.playing.toURI().toASCIIString());
+		Media media = new Media(this.playing.getBaseFile().toURI().toASCIIString());
 		this.player = new MediaPlayer(media);
 		this.player.setOnEndOfMedia(new Runnable()
 		{
@@ -84,6 +85,7 @@ public class MusicPlayerThread extends Thread
     {
         Duration position = this.player.getCurrentTime();
         this.player.stop();
+		this.player = null;
         return position;
     }
 
@@ -96,4 +98,9 @@ public class MusicPlayerThread extends Thread
     {
 		return this.player.getMedia().getDuration();
     }
+
+	public MusicFile getPlaying()
+	{
+		return this.playing;
+	}
 }

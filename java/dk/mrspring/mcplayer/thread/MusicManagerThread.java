@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.thread;
 
+import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.list.Playlist;
 import javafx.util.Duration;
@@ -71,6 +72,14 @@ public class MusicManagerThread extends Thread
         this.state = NOT_PLAYING;
     }
 
+	public synchronized void updateQueue()
+	{
+		this.queue = LiteModMCPlayer.allFiles;
+
+		if (this.player.getPlaying() != this.queue.get(0))
+			this.playInQueue(0);
+	}
+
 	public synchronized void resumeFrom(Duration from)
 	{
 		if (this.player != null && this.state == PAUSED)
@@ -128,7 +137,7 @@ public class MusicManagerThread extends Thread
         if (this.player != null)
             this.stopCurrentPlayer();
 
-        this.player = new MusicPlayerThread(file.getBaseFile(), startPosition);
+        this.player = new MusicPlayerThread(file, startPosition);
         this.player.start();
         this.state = PLAYING;
     }

@@ -2,9 +2,23 @@ key.mcplayer.toggle_size=Toggle Overlay Size
 key.mcplayer.pause_play=Pause/Play Music
 key.mcplayer.play_next=Skip to next song in Queue
 key.mcplayer.play_prev=Skip to the previous song in Queue
+key.mcplayer.open_gui=Open Queue Editor
 
 gui.mcplayer.toggle_overlay_size=Toggle Overlay Size
 gui.mcplayer.overlay_transparency=Overlay Transparency
 gui.mcplayer.next_up_percentage=Percent through song before showing "Next Up"
 gui.mcplayer.music_location=Path to Music Directory
 gui.mcplayer.reload_music=Reload Music
+gui.mcplayer.volume=Volume
+gui.mcplayer.open_q_editor=Open Queue Editor
+
+gui.mcplayer.music_title=Title
+gui.mcplayer.music_album=Album
+gui.mcplayer.music_artist=Artist
+gui.mcplayer.music_genre=Genre
+gui.mcplayer.music_year=Release Year
+gui.mcplayer.music_composer=Composer(s)
+
+gui.mcplayer.details=Details
+gui.mcplayer.move_up=Move Up
+gui.mcplayer.move_down=Move Down

@@ -39,6 +39,9 @@ public class MusicFile
     protected String title = "UNTITLED";
     protected String album = "UNTITLED";
     protected String artist = "UNTITLED";
+	protected String genre = "UNAVAILABLE";
+	protected String year = "UNAVAILABLE";
+	protected String composer = "UNAVAILABLE";
 
     protected BufferedImage cover;
     protected int textureId;
@@ -153,6 +156,27 @@ public class MusicFile
 
         return temp;
     }
+
+	public String getGenre()
+	{
+		if (this.genre.equals("UNAVAILABLE"))
+			this.genre = this.getField(FieldKey.GENRE);
+		return this.genre;
+	}
+
+	public String getYear()
+	{
+		if (this.year.equals("UNAVAILABLE"))
+			this.year = this.getField(FieldKey.YEAR);
+		return this.year;
+	}
+
+	public String getComposer()
+	{
+		if (this.composer.equals("UNAVAILABLE"))
+			this.composer = this.getField(FieldKey.COMPOSER);
+		return this.composer;
+	}
 
     public String getTitle()
     {

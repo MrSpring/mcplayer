@@ -23,12 +23,9 @@ public class GuiMusicScrubber extends Gui
 	boolean mouseClicked = false;
 	boolean isPlayheadClicked = false;
 	boolean solidBackground = false;
-	float cubeRadius = 3;
 	float cubeAlpha = 0F;
 	boolean wasMouseClicked = false;
 	double playheadPosition;
-
-	float cubeX, cubeY;
 
 	public GuiMusicScrubber(int x, int y, int width, int height, boolean showTitle)
 	{
@@ -56,7 +53,7 @@ public class GuiMusicScrubber extends Gui
 	{
 		//if (mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY + 5 && mouseY < this.posY + this.height - 5)
 			//System.out.println(" Mouse was clicked! X: " + mouseX + ", Y: " + mouseY);
-		this.isPlayheadClicked = mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY + 5 && mouseY < this.posY + this.height - 5;
+		this.isPlayheadClicked = mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY && mouseY < this.posY + this.height + 5;
 
 		if (this.solidBackground)
 			glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 1F);
@@ -75,7 +72,6 @@ public class GuiMusicScrubber extends Gui
 			{
 				double posInMillis = playheadPosition * LiteModMCPlayer.thread.getLength().toMillis();
 				Duration resumeFrom = new Duration(posInMillis);
-				System.out.println(" PosInMillis: " + posInMillis + ", Duration.toMillis(): " + resumeFrom.toMillis() + " length in millis: " + LiteModMCPlayer.thread.getLength().toMillis());
 				LiteModMCPlayer.thread.resumeFrom(resumeFrom);
 				this.wasMouseClicked = false;
 			}
@@ -84,14 +80,41 @@ public class GuiMusicScrubber extends Gui
 		else
 		{
 			LiteModMCPlayer.thread.pauseMusic();
-			playheadPosition = (mouseX - this.posX + 5) / (double) barLength;
+			playheadPosition = (mouseX - this.posX - 5) / (double) barLength;
 			this.wasMouseClicked = true;
 		}
 
-		//System.out.println(" Playhead position in millis: " + playheadPosition * LiteModMCPlayer.thread.getLength().toMillis() + ", Actual Length: " + LiteModMCPlayer.thread.getLength().toMillis());
+		float barHeight = this.posY + 5 + (this.height / 2);
 
-		glDrawRect(this.posX + 5, this.posY + 10, this.width - 10, 1, ReadableColor.WHITE, 0.5F);
-		glDrawRect(this.posX + 5, this.posY + 10, (this.width - 10) * (float) playheadPosition, 1, ReadableColor.WHITE, 1F);
+		if (this.showTitle)
+			barHeight = this.posY + 5 + 8 + ((this.height - 8) / 2);
+
+		glDrawRect(this.posX + 5, barHeight, this.width - 10, 1, ReadableColor.WHITE, 0.5F);
+		glDrawRect(this.posX + 5, barHeight - 1, (this.width - 10) * (float) playheadPosition, 3, ReadableColor.WHITE, 1F);
+
+		float playHeadPosX = this.posX + 3 + (float) (barLength * playheadPosition);
+		float playHeadPosY = barHeight - 2;
+
+		boolean isMouseHoveringPlayHead = ((mouseY >= playHeadPosY && mouseY < playHeadPosY + 5) && (mouseX >= playHeadPosX && mouseX < playHeadPosX + 5)) || isPlayheadClicked;
+
+		if (isMouseHoveringPlayHead)
+			this.cubeAlpha += 0.1F;
+		else this.cubeAlpha -= 0.1F;
+
+		if (this.cubeAlpha > 1F)
+			this.cubeAlpha = 1F;
+		else if (this.cubeAlpha < 0.5F)
+			this.cubeAlpha = 0.5F;
+
+		glDrawRect(playHeadPosX, playHeadPosY, 5, 5, ReadableColor.WHITE, this.cubeAlpha);
+
+		if (this.showTitle)
+		{
+			String title = LiteModMCPlayer.thread.getCurrentlyPlaying().getTitle(), artist = LiteModMCPlayer.thread.getCurrentlyPlaying().getArtist();
+
+			minecraft.fontRenderer.drawString(title, this.posX + 10, this.posY + 10, 0xFFFFFF, true);
+			minecraft.fontRenderer.drawString(" by " + artist, this.posX + 10 + minecraft.fontRenderer.getStringWidth(title), this.posY + 10, 0xBBBBBB, true);
+		}
 
 		/*glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.5F);
 

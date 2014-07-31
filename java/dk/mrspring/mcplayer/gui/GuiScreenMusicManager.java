@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StatCollector;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.ReadableColor;
 
@@ -21,8 +23,10 @@ public class GuiScreenMusicManager extends GuiScreen
 {
 	private final GuiScreen onExit;
 
-	GuiFancyButton button;
-	MusicList list;
+	GuiFancyButton doneButton;
+	GuiFancyButton moveUpButton;
+	GuiFancyButton moveDownButton;
+	GuiMusicList list;
 	MusicDetails details;
 	GuiMusicScrubber scrubber;
 	int detailWidth = 0;
@@ -36,16 +40,19 @@ public class GuiScreenMusicManager extends GuiScreen
 	public void initGui()
 	{
 		super.initGui();
-		this.button = new GuiFancyButton(5, 5, 50, 39, "gui.done");
-		this.list = new MusicList(0, 50, this.width, this.height - 100);
+		this.doneButton = new GuiFancyButton(5, this.height - 50 + 6, 50, 39, "gui.done");
+		this.moveUpButton = new GuiFancyButton(70, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_up").setDisabled();
+		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
+		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
-		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 30, true);
+		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 39, true);
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3)
 	{
 		super.drawScreen(mouseX, mouseY, par3);
+
 		glDrawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
 
 		if (this.detailWidth > 0)
@@ -66,6 +73,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.details.setPosX(this.width - this.detailWidth);
 		this.list.draw(this.mc, mouseX, mouseY);
 		this.details.draw(this.mc);
+		this.details.setShowing(this.list.getFocused());
 
 
 		glDrawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
@@ -74,14 +82,20 @@ public class GuiScreenMusicManager extends GuiScreen
 		glDrawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
 		glDrawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
 
-		//this.button.drawButton(this.mc, mouseX, mouseY);
-		this.scrubber.draw(this.mc, mouseX, mouseY);
-	}
+		if (this.list.selected != -1)
+		{
+			this.moveUpButton.setEnabled();
+			this.moveDownButton.setEnabled();
+		} else
+		{
+			this.moveUpButton.setDisabled();
+			this.moveDownButton.setDisabled();
+		}
 
-	@Override
-	protected void mouseClickMove(int p_146273_1_, int p_146273_2_, int p_146273_3_, long p_146273_4_)
-	{
-		super.mouseClickMove(p_146273_1_, p_146273_2_, p_146273_3_, p_146273_4_);
+		this.doneButton.drawButton(this.mc, mouseX, mouseY);
+		this.moveUpButton.drawButton(this.mc, mouseX, mouseY);
+		this.moveDownButton.drawButton(this.mc, mouseX, mouseY);
+		this.scrubber.draw(this.mc, mouseX, mouseY);
 	}
 
 	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
@@ -130,18 +144,32 @@ public class GuiScreenMusicManager extends GuiScreen
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
 		super.mouseClicked(par1, par2, par3);
-		//System.out.println(" Mouse was clicked at: X" + par1 + ", Y" + par2 + ", the button was: " + par3);
+		//System.out.println(" Mouse was clicked at: X" + par1 + ", Y" + par2 + ", the doneButton was: " + par3);
 		if (par1 < this.width - this.detailWidth)
 			this.list.mouseClicked(par1, par2);
 		else
-			this.list.setSelected(-1);
+			this.list.setSelected(-1, false);
+
+		if (this.doneButton.mousePressed(par1, par2, par3))
+			this.mc.displayGuiScreen(this.onExit);
+		else if (this.moveUpButton.mousePressed(par1, par2, par3))
+			this.list.moveDown();
+		else if (this.moveDownButton.mousePressed(par1, par2, par3))
+			this.list.moveUp();
 	}
 
 	@Override
 	protected void keyTyped(char par1, int par2)
 	{
-		super.keyTyped(par1, par2);
+
 		//System.out.println(" Key was pressed: " + par1 + ", ID: " + par2);
+		if (par2 == Keyboard.KEY_UP)
+			this.list.setSelected(this.list.selected - 1, true);
+		else if (par2 == Keyboard.KEY_DOWN)
+			this.list.setSelected(this.list.selected + 1, true);
+		else if (par2 == Keyboard.KEY_SPACE)
+			LiteModMCPlayer.thread.togglePausePlay();
+		else super.keyTyped(par1, par2);
 	}
 
 	@Override
@@ -151,139 +179,6 @@ public class GuiScreenMusicManager extends GuiScreen
 		int wheel = Mouse.getDWheel();
 		if (wheel != 0)
 			this.list.mouseWheel(wheel);
-	}
-
-	class MusicList
-	{
-		int posX, posY;
-		int width, height;
-		int scrollHeight = 0;
-		Playlist<MusicFile> list;
-		int scrollbarWidth = 5;
-		int perFileHeight = 80;
-		int selected = -1;
-
-		public MusicList(int x, int y, int width, int height)
-		{
-			this.posX = x;
-			this.posY = y;
-
-			this.width = width;
-			this.height = height;
-
-			this.list = LiteModMCPlayer.allFiles;
-		}
-
-		public void mouseWheel(int dWheel)
-		{
-			System.out.println(dWheel);
-			int height = (-dWheel / 10) + this.scrollHeight;
-
-			if (height < 0)
-				height = 0;
-			else if (height > ((this.list.size() - 1) * this.perFileHeight))
-				height = ((this.list.size() - 1) * this.perFileHeight);
-
-			this.scrollHeight = height;
-			//else if (dWheel <= )
-		}
-
-		public void draw(Minecraft minecraft, int mouseX, int mouseY)
-		{
-			int y = 0;
-			for (int i = 0; i < this.list.size(); i++)
-			{
-				MusicFile file = this.list.get(i);
-				float alpha = 0.5F;
-				if (i == this.selected)
-					alpha = 0.75F;
-				glDrawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, ReadableColor.BLACK, alpha);
-
-				file.bindCover(minecraft);
-				glDrawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
-
-				FontRenderer renderer = minecraft.fontRenderer;
-
-				renderer.drawString(file.getTitle(), this.perFileHeight + 5, 15 + this.posY + y - this.scrollHeight, 0xFFFFFF, true);
-				renderer.drawString(file.getAlbum(), this.perFileHeight + 5, 25 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
-				renderer.drawString(file.getArtist(),this.perFileHeight + 5, 35 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
-
-				glDrawRect(this.posX + this.width, this.posY + 5, 1, this.height - 10, ReadableColor.DKGREY, 0.75F);
-
-				if (i == this.selected)
-				{
-					glDrawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
-					glDrawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
-
-					glDrawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
-					glDrawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
-				}
-				y += this.perFileHeight;
-			}
-
-			//if (this.canScrollbarScroll(1))
-			//	this.scrollHeight++;
-
-			this.drawScrollbar();
-		}
-
-		public void setSelected(int selected)
-		{
-			this.selected = selected;
-		}
-
-		public MusicFile getFocused()
-		{
-			if (this.selected != -1)
-				return this.list.get(this.selected);
-			else return null;
-		}
-
-		public boolean mouseClicked(int mouseX, int mouseY)
-		{
-			if ((mouseY > 50) && (mouseY < this.height + 50) && (mouseX > this.posX) && (mouseX < this.posX + this.width))
-			{
-				int listMouseY = (mouseY - 50) + this.scrollHeight;
-				this.selected = listMouseY / this.perFileHeight;
-				return true;
-			} else return false;
-		}
-
-		private void drawScrollbar()
-		{
-			glDrawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), ReadableColor.WHITE, 1F);
-		}
-
-		private float getScrollbarY()
-		{
-			float range = this.height - this.getScrollbarHeight() - 10;
-			float fileHeights = (this.list.size() - 1) * this.perFileHeight;
-			float decimal = ((float) this.scrollHeight) / fileHeights;
-			return (decimal * range) + 5;
-		}
-
-		private int getScrollbarHeight()
-		{
-			return ((this.height - 10) / 100) * 30;
-		}
-
-		private boolean canScrollbarScroll(int height)
-		{
-			if (height > 0)
-				return (height + this.scrollHeight) < ((this.list.size() - 1) * this.perFileHeight);
-			else
-				return (height + this.scrollHeight) > 0;
-		}
-
-		public void setWidth(int width)
-		{
-			this.width = width;
-		}
-
-		public void setHeight(int height)
-		{
-			this.height = height;
-		}
 	}
 
 	class MusicDetails
@@ -304,7 +199,30 @@ public class GuiScreenMusicManager extends GuiScreen
 		public void draw(Minecraft minecraft)
 		{
 			if (this.width > 80)
-				minecraft.fontRenderer.drawString("Details", this.posX + (this.width / 2) - (minecraft.fontRenderer.getStringWidth("Details") / 2), this.posY + 5, 0xFFFFFF, true);
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.details"), this.posX + (this.width / 2) - (minecraft.fontRenderer.getStringWidth("Details") / 2), this.posY + 5, 0xFFFFFF, true);
+
+			if (this.width != 0 && this.showing != null)
+			{
+				this.showing.bindCover(minecraft);
+				glDrawTexturedRect(this.posX + 10, this.posY + 10, this.width / 3, this.width / 3, 0, 0, 512, 512, 1F);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":", this.posX + (this.width / 3) + 15, this.posY + 20, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":", this.posX + (this.width / 3) + 15, this.posY + 35, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":", this.posX + (this.width / 3) + 15, this.posY + 50, 0xEEEEEE, true);
+
+				minecraft.fontRenderer.drawString(this.showing.getTitle(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":"), this.posY + 20, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getAlbum(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":"), this.posY + 35, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getArtist(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":"), this.posY + 50, 0xEEEEEE, true);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":", this.posX + 10, this.posY + (this.width / 3) + 15, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getGenre(), this.posX + 15 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":"), this.posY + (this.width / 3) + 15, 0xEEEEEE, true);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_year") + ":", this.posX + 10, this.posY + (this.width / 3) + 25, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getYear(), this.posX + 15 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_year") + ":"), this.posY + (this.width / 3) + 25, 0xEEEEEE, true);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_composer") + ":", this.posX + 10, this.posY + (this.width / 3) + 35, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getComposer(), this.posX + 15 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_composer") + ":"), this.posY + (this.width / 3) + 35, 0xEEEEEE, true);
+			}
 		}
 
 		public void setWidth(int width)

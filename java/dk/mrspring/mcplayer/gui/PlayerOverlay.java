@@ -4,11 +4,8 @@ import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.util.ReadableColor;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Created by Konrad on 16-07-2014 for MC Music Player.

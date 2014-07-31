@@ -1,0 +1,23 @@
+key.mcplayer.toggle_size=Skift overlay Størelse
+key.mcplayer.pause_play=Pause/Play Musik
+key.mcplayer.play_next=Spil næste nummer i Køen
+key.mcplayer.play_prev=Spil forrige nummer i Køen
+key.mcplayer.open_gui=Åben Kø redigerings vinduet
+
+gui.mcplayer.toggle_overlay_size=Skift overlay Størelse
+gui.mcplayer.overlay_transparency=Overlay Gennemsigtighed
+gui.mcplayer.next_up_percentage=Procent igennem sangen før "Next Up" bliver vist
+gui.mcplayer.music_location=Sti til Musik mappe
+gui.mcplayer.reload_music=Genindlæs Musik
+gui.mcplayer.volume=Lydstyrke
+
+gui.mcplayer.music_title=Tittel
+gui.mcplayer.music_album=Album
+gui.mcplayer.music_artist=Kunstner
+gui.mcplayer.music_genre=Genre
+gui.mcplayer.music_year=Udgivelsesår
+gui.mcplayer.music_composer=Komponist(er)
+
+gui.mcplayer.details=Detaljer
+gui.mcplayer.move_up=Flyt Op
+gui.mcplayer.move_down=Flyt Ned

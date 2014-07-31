@@ -45,19 +45,19 @@ public class GuiFancyButton extends Gui
 		if (!this.isEnabled())
 			alpha = 0.5F;
 
-		glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.25F);
+		DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.25F);
 
 
 
-		glDrawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, alpha);
-		glDrawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, alpha);
+		DrawingHelper.drawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, alpha);
+		DrawingHelper.drawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, alpha);
 
-		glDrawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
-		glDrawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
+		DrawingHelper.drawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
+		DrawingHelper.drawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, alpha);
 
 		boolean isMouseHovering = mouseX >= this.posX && mouseY >= this.posY && mouseX < this.posX + this.width && mouseY < this.posY + this.height;
 		if (isMouseHovering && this.isEnabled())
-			glDrawRect(this.posX + 2, this.posY + 2, this.width - 4F, this.height - 4F, ReadableColor.LTGREY, 0.75F);
+			DrawingHelper.drawRect(this.posX + 2, this.posY + 2, this.width - 4F, this.height - 4F, ReadableColor.LTGREY, 0.75F);
 
 		this.drawCenteredString(minecraft.fontRenderer, this.getTitle(), this.posX + (this.width / 2), this.posY + ((this.height / 2) - 4), this.getTextColor(mouseX, mouseY));
 	}
@@ -78,27 +78,6 @@ public class GuiFancyButton extends Gui
 		if (StatCollector.canTranslate(this.title))
 			return StatCollector.translateToLocal(this.title);
 		else return this.title;
-	}
-
-	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
-	{
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_CULL_FACE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
-
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertex(x, y + height, 0);
-		tessellator.addVertex(x + width, y + height, 0);
-		tessellator.addVertex(x + width, y, 0);
-		tessellator.addVertex(x, y, 0);
-		tessellator.draw();
-
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 
 	public GuiFancyButton setDisabled()

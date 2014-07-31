@@ -94,7 +94,7 @@ public class GuiMusicList
 			float alpha = 0.5F;
 			if (i == this.selected)
 				alpha = 0.75F;
-			glDrawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, ReadableColor.BLACK, alpha);
+			DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, ReadableColor.BLACK, alpha);
 
 			file.bindCover(minecraft);
 			glDrawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
@@ -105,15 +105,15 @@ public class GuiMusicList
 			renderer.drawString(file.getAlbum(), this.perFileHeight, 25 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
 			renderer.drawString(file.getArtist(),this.perFileHeight, 35 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
 
-			glDrawRect(this.posX + this.width, this.posY + 5, 1, this.height - 10, ReadableColor.DKGREY, 0.75F);
+			DrawingHelper.drawRect(this.posX + this.width, this.posY + 5, 1, this.height - 10, ReadableColor.DKGREY, 0.75F);
 
 			if (i == this.selected)
 			{
-				glDrawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
-				glDrawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
 
-				glDrawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
-				glDrawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
 			}
 			y += this.perFileHeight;
 		}
@@ -154,7 +154,7 @@ public class GuiMusicList
 
 	private void drawScrollbar()
 	{
-		glDrawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), ReadableColor.WHITE, 1F);
 	}
 
 	private float getScrollbarY()
@@ -178,27 +178,6 @@ public class GuiMusicList
 	public void setHeight(int height)
 	{
 		this.height = height;
-	}
-
-	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
-	{
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_CULL_FACE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
-
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertex(x, y + height, 0);
-		tessellator.addVertex(x + width, y + height, 0);
-		tessellator.addVertex(x + width, y, 0);
-		tessellator.addVertex(x, y, 0);
-		tessellator.draw();
-
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 
 	private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2, float alpha)

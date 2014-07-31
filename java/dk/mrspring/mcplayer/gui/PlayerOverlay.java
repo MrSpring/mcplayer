@@ -58,25 +58,25 @@ public class PlayerOverlay
 		if (!isSmall && additionalWidth < titleWidth + 10)
 			additionalWidth += 5F;*/
 
-        glDrawRect(5F, 5F, (width + additionalWidth), height, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+        DrawingHelper.drawRect(5F, 5F, (width + additionalWidth), height, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 
 
         // minecraft.getTextureManager().bindTexture(file.getCoverLocation());
 		thread.getCurrentlyPlaying().bindCover(minecraft);
 
-        glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
+        DrawingHelper.drawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
 
 		if (thread.isPaused())
 		{
 			minecraft.getTextureManager().bindTexture(new ResourceLocation("mcplayer", "textures/overlay/pause_overlay.png"));
-			glDrawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
+			DrawingHelper.drawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
 		}
 
 		try
 		{
 			double progressThroughSong = thread.getPosition().toMillis() / thread.getLength().toMillis();
 			float progressBerHeight = 2.5F;
-			glDrawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, ReadableColor.CYAN, 1F);
+			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, ReadableColor.CYAN, 1F);
 
 			String nextTitle = thread.getNextInQueue().getTitle();
 			String nextArtist = thread.getNextInQueue().getArtist();
@@ -85,8 +85,8 @@ public class PlayerOverlay
 
 			if (nextUpHeight != 0F)
 			{
-				glDrawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
-				glDrawRect(5F, 5F + height, nextUpWidth + 10, 1F, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, 1F, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 			}
 
 			if (progressThroughSong > LiteModMCPlayer.config.getNextUpDecimal())
@@ -118,47 +118,5 @@ public class PlayerOverlay
         }
 
         oldAdditionalWidth = additionalWidth;
-    }
-
-    private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
-    {
-        glEnable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_CULL_FACE);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
-
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertex(x, y + height, 0);
-        tessellator.addVertex(x + width, y + height, 0);
-        tessellator.addVertex(x + width, y, 0);
-        tessellator.addVertex(x, y, 0);
-        tessellator.draw();
-
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_BLEND);
-    }
-
-    private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2, float alpha)
-    {
-        glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
-        glAlphaFunc(GL_GREATER, 0.01F);
-        glEnable(GL_TEXTURE_2D);
-        glColor4f(1.0F, 1.0F, 1.0F, alpha);
-
-        float texMapScale = 0.001953125F;
-
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(x + 0,     y + height, 0, u  * texMapScale, v2 * texMapScale);
-        tessellator.addVertexWithUV(x + width, y + height, 0, u2 * texMapScale, v2 * texMapScale);
-        tessellator.addVertexWithUV(x + width, y + 0,      0, u2 * texMapScale, v  * texMapScale);
-        tessellator.addVertexWithUV(x + 0,     y + 0,      0, u  * texMapScale, v  * texMapScale);
-        tessellator.draw();
-
-		glDisable(GL_BLEND);
     }
 }

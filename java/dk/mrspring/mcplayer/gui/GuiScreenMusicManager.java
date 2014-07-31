@@ -45,7 +45,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
-		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 39, true);
+		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 39, true).enableControls();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	{
 		super.drawScreen(mouseX, mouseY, par3);
 
-		glDrawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
 
 		if (this.detailWidth > 0)
 			this.details.draw(this.mc);
@@ -76,11 +76,11 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.details.setShowing(this.list.getFocused());
 
 
-		glDrawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
-		glDrawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
 
-		glDrawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
-		glDrawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
 
 		if (this.list.selected != -1)
 		{
@@ -96,48 +96,6 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.moveUpButton.drawButton(this.mc, mouseX, mouseY);
 		this.moveDownButton.drawButton(this.mc, mouseX, mouseY);
 		this.scrubber.draw(this.mc, mouseX, mouseY);
-	}
-
-	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
-	{
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_CULL_FACE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
-
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertex(x, y + height, 0);
-		tessellator.addVertex(x + width, y + height, 0);
-		tessellator.addVertex(x + width, y, 0);
-		tessellator.addVertex(x, y, 0);
-		tessellator.draw();
-
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-	}
-
-	private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2, float alpha)
-	{
-		glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
-		glAlphaFunc(GL_GREATER, 0.01F);
-		glEnable(GL_TEXTURE_2D);
-		glColor4f(1.0F, 1.0F, 1.0F, alpha);
-
-		float texMapScale = 0.001953125F;
-
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + 0,     y + height, 0, u  * texMapScale, v2 * texMapScale);
-		tessellator.addVertexWithUV(x + width, y + height, 0, u2 * texMapScale, v2 * texMapScale);
-		tessellator.addVertexWithUV(x + width, y + 0,      0, u2 * texMapScale, v  * texMapScale);
-		tessellator.addVertexWithUV(x + 0,     y + 0,      0, u  * texMapScale, v  * texMapScale);
-		tessellator.draw();
-
-		glDisable(GL_BLEND);
 	}
 
 	@Override
@@ -204,7 +162,7 @@ public class GuiScreenMusicManager extends GuiScreen
 			if (this.width != 0 && this.showing != null)
 			{
 				this.showing.bindCover(minecraft);
-				glDrawTexturedRect(this.posX + 10, this.posY + 10, this.width / 3, this.width / 3, 0, 0, 512, 512, 1F);
+				DrawingHelper.drawTexturedRect(this.posX + 10, this.posY + 10, this.width / 3, this.width / 3, 0, 0, 512, 512, 1F);
 
 				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":", this.posX + (this.width / 3) + 15, this.posY + 20, 0xEEEEEE, true);
 				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":", this.posX + (this.width / 3) + 15, this.posY + 35, 0xEEEEEE, true);

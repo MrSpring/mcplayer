@@ -4,13 +4,8 @@ import dk.mrspring.mcplayer.LiteModMCPlayer;
 import javafx.util.Duration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.ReadableColor;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.glDisable;
 
 /**
  * Created by MrSpring on 28-07-14 for MC Music Player.
@@ -23,6 +18,7 @@ public class GuiMusicScrubber extends Gui
 	boolean mouseClicked = false;
 	boolean isPlayheadClicked = false;
 	boolean solidBackground = false;
+	boolean showControls = false;
 	float cubeAlpha = 0F;
 	boolean wasMouseClicked = false;
 	double playheadPosition;
@@ -49,21 +45,31 @@ public class GuiMusicScrubber extends Gui
 		return this;
 	}
 
+	public GuiMusicScrubber enableControls()
+	{
+		this.showControls = true;
+		return this;
+	}
+
+	public GuiMusicScrubber disableControls()
+	{
+		this.showControls = false;
+		return this;
+	}
+
 	public void draw(Minecraft minecraft, int mouseX, int mouseY)
 	{
-		//if (mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY + 5 && mouseY < this.posY + this.height - 5)
-			//System.out.println(" Mouse was clicked! X: " + mouseX + ", Y: " + mouseY);
 		this.isPlayheadClicked = mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY && mouseY < this.posY + this.height + 5;
 
 		if (this.solidBackground)
-			glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 1F);
-		else glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.5F);
+			DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 1F);
+		else DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.5F);
 
-		glDrawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, 1F);
-		glDrawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, 1F);
 
-		glDrawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
-		glDrawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
 
 		int barLength = this.width - 10;
 		if (!this.isPlayheadClicked)
@@ -89,8 +95,17 @@ public class GuiMusicScrubber extends Gui
 		if (this.showTitle)
 			barHeight = this.posY + 5 + 8 + ((this.height - 8) / 2);
 
-		glDrawRect(this.posX + 5, barHeight, this.width - 10, 1, ReadableColor.WHITE, 0.5F);
-		glDrawRect(this.posX + 5, barHeight - 1, (this.width - 10) * (float) playheadPosition, 3, ReadableColor.WHITE, 1F);
+		if (this.showControls)
+		{
+
+
+			/*if (LiteModMCPlayer.thread.isPaused())
+				DrawingHelper.drawPlayIcon(this.posX + 50, this.posY + 50, 20, 20, ReadableColor.WHITE, 1F, mouseX, mouseY);
+			else DrawingHelper.drawPauseIcon(this.posX + 50, this.posY + 50, 20, 20, ReadableColor.WHITE, 1F, mouseX, mouseY);*/
+		}
+
+		DrawingHelper.drawRect(this.posX + 5, barHeight, this.width - 10, 1, ReadableColor.WHITE, 0.5F);
+		DrawingHelper.drawRect(this.posX + 5, barHeight - 1, (this.width - 10) * (float) playheadPosition, 3, ReadableColor.WHITE, 1F);
 
 		float playHeadPosX = this.posX + 3 + (float) (barLength * playheadPosition);
 		float playHeadPosY = barHeight - 2;
@@ -106,7 +121,7 @@ public class GuiMusicScrubber extends Gui
 		else if (this.cubeAlpha < 0.5F)
 			this.cubeAlpha = 0.5F;
 
-		glDrawRect(playHeadPosX, playHeadPosY, 5, 5, ReadableColor.WHITE, this.cubeAlpha);
+		DrawingHelper.drawRect(playHeadPosX, playHeadPosY, 5, 5, ReadableColor.WHITE, this.cubeAlpha);
 
 		if (this.showTitle)
 		{
@@ -115,83 +130,7 @@ public class GuiMusicScrubber extends Gui
 			minecraft.fontRenderer.drawString(title, this.posX + 10, this.posY + 10, 0xFFFFFF, true);
 			minecraft.fontRenderer.drawString(" by " + artist, this.posX + 10 + minecraft.fontRenderer.getStringWidth(title), this.posY + 10, 0xBBBBBB, true);
 		}
-
-		/*glDrawRect(this.posX, this.posY, this.width, this.height, ReadableColor.BLACK, 0.5F);
-
-		glDrawRect(this.posX, this.posY, this.width, 1F, ReadableColor.WHITE, 1F);
-		glDrawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, ReadableColor.WHITE, 1F);
-
-		glDrawRect(this.posX, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
-		glDrawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, ReadableColor.WHITE, 1F);
-
-		float barHeight = 0;
-
-		if (this.showTitle)
-		{
-			String title = LiteModMCPlayer.allFiles.get(0).getTitle();
-			String artist = LiteModMCPlayer.allFiles.get(0).getArtist();
-			minecraft.fontRenderer.drawString(title, this.posX + 5 + 5, this.posY + 5, 0xFFFFFF, true);
-			minecraft.fontRenderer.drawString(" by " + artist, this.posX + 5 + 5 + minecraft.fontRenderer.getStringWidth(title), this.posY + 5, 0xBBBBBB, true);
-			barHeight = 10;
-		}
-
-		float extraBarHeight = ((this.height - barHeight) / 2);
-		double throughSong = LiteModMCPlayer.thread.getPosition().toMillis() / LiteModMCPlayer.thread.getLength().toMillis();
-		float barLength = this.width - 10;
-
-		this.cubeX = this.posX + 5 + (float) (barLength * throughSong) - this.cubeRadius;
-		this.cubeY = this.posY + extraBarHeight + barHeight - (this.cubeRadius / 2);
-
-		boolean isMouseHoveringCube = mouseX >= this.cubeX && mouseY >= this.cubeY && mouseX < this.cubeX + (2 * this.cubeRadius) && mouseY < this.cubeY + (2 * this.cubeRadius);
-
-		this.isPlayheadClicked = isMouseHoveringCube && this.mouseClicked;
-
-		System.out.println(this.isPlayheadClicked);
-
-		if (this.isPlayheadClicked)
-			throughSong = (mouseX - this.posX + 5) / barLength;
-
-		this.cubeX = this.posX + 5 + (float) (barLength * throughSong) - this.cubeRadius;
-		this.cubeY = this.posY + extraBarHeight + barHeight - (this.cubeRadius / 2);
-
-		glDrawRect(this.posX + 5, this.posY + 1 + extraBarHeight + barHeight, barLength, 1, ReadableColor.WHITE, 0.75F);
-		glDrawRect(this.posX + 5, this.posY + 0 + extraBarHeight + barHeight, (float) (barLength * throughSong), 3, ReadableColor.CYAN, 1F);
-
-		if (isMouseHoveringCube)
-			this.cubeAlpha += 0.1F;
-		else this.cubeAlpha -= 0.1F;
-
-		if (this.cubeAlpha > 1)
-			this.cubeAlpha = 1;
-		else if (this.cubeAlpha < 0.5)
-			this.cubeAlpha = 0.5F;
-
-		glDrawRect(this.cubeX, this.cubeY, this.cubeRadius * 2, this.cubeRadius * 2, ReadableColor.WHITE, this.cubeAlpha);
-
-		//glDrawRect(this.posX + 5 + (float) (barLength * throughSong), this.posY + 15 + extraBarHeight - this.cubeRadius, this.cubeRadius, this.cubeRadius);
-
-		//glDrawRect(this.posX + 5 + (float) (barLength * throughSong), this.posY + 0 + extraBarHeight - this.cubeRadius, this.cubeRadius, this.cubeRadius, ReadableColor.BLACK, .9F);
-		//glDrawRect(this.posX + 5 + (float) (barLength * throughSong), this.posY + 0 + extraBarHeight - this.cubeRadius, this.cubeRadius, this.cubeRadius, ReadableColor.WHITE, this.cubeAlpha);*/
 	}
 
-	private static void glDrawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
-	{
-		glEnable(GL_BLEND);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_CULL_FACE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(colour.getRed(), colour.getGreen(), colour.getBlue(), alpha);
 
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertex(x, y + height, 0);
-		tessellator.addVertex(x + width, y + height, 0);
-		tessellator.addVertex(x + width, y, 0);
-		tessellator.addVertex(x, y, 0);
-		tessellator.draw();
-
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-	}
 }

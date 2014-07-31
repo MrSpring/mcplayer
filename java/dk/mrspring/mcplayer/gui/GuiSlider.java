@@ -1,6 +1,5 @@
 package dk.mrspring.mcplayer.gui;
 
-import com.sun.org.apache.regexp.internal.recompile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
@@ -8,6 +7,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.text.DecimalFormat;
 
+/**
+ * Created by MrSpring on 26-07-14 for MC Music Player.
+ */
 public class GuiSlider extends GuiButton
 {
     private double value = 1;

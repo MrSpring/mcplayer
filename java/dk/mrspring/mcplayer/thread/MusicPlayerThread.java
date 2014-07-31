@@ -45,7 +45,8 @@ public class MusicPlayerThread extends Thread
     @Override
     public void run()
     {
-        this.player.play();
+		if (this.player != null)
+        	this.player.play();
     }
 
     public synchronized Duration getPosition()
@@ -96,7 +97,11 @@ public class MusicPlayerThread extends Thread
 
     public synchronized Duration getMediaLength()
     {
-		return this.player.getMedia().getDuration();
+		if (this.player != null)
+			if (this.player.getMedia() != null)
+				return this.player.getMedia().getDuration();
+
+		return Duration.ZERO;
     }
 
 	public MusicFile getPlaying()

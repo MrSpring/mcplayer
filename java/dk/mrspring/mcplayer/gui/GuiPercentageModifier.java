@@ -5,6 +5,9 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 
+/**
+ * Created by MrSpring on 26-07-14 for MC Music Player.
+ */
 public class GuiPercentageModifier extends Gui
 {
     protected GuiButton increase;

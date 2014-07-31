@@ -20,7 +20,6 @@ public class MusicManagerThread extends Thread
     public static final int STOPPED = 4;
     public static final int SCHEDULED_FOR_NEXT = 5;
     public static final int SCHEDULED_FOR_PREV = 6;
-	public static final int SCRUBBING = 7;
 
     public int state = NOT_INITIALIZED;
     public double volume = 1.0;
@@ -171,7 +170,9 @@ public class MusicManagerThread extends Thread
 
     public synchronized void schedulePrev()
     {
-        this.state = SCHEDULED_FOR_PREV;
+		if (this.getPosition().toMillis() > 5000)
+			this.playInQueue(0);
+        else this.state = SCHEDULED_FOR_PREV;
     }
 
     public synchronized void stopMusic()

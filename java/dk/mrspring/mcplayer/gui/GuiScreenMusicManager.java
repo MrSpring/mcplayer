@@ -102,7 +102,6 @@ public class GuiScreenMusicManager extends GuiScreen
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
 		super.mouseClicked(par1, par2, par3);
-		//System.out.println(" Mouse was clicked at: X" + par1 + ", Y" + par2 + ", the doneButton was: " + par3);
 		if (par1 < this.width - this.detailWidth)
 			this.list.mouseClicked(par1, par2);
 		else
@@ -114,6 +113,8 @@ public class GuiScreenMusicManager extends GuiScreen
 			this.list.moveDown();
 		else if (this.moveDownButton.mousePressed(par1, par2, par3))
 			this.list.moveUp();
+
+		this.scrubber.mousePressed(par1, par2);
 	}
 
 	@Override

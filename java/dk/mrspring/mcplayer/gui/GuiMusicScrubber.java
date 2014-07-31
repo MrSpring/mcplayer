@@ -58,6 +58,31 @@ public class GuiMusicScrubber extends Gui
 		return this;
 	}
 
+	public boolean mousePressed(int mouseX, int mouseY)
+	{
+		if (mouseX >= this.posX && mouseX < this.posX + this.width && mouseY >= this.posY && mouseY < this.posY + height)
+		{
+			int controllerHeight = 15;
+
+			if (mouseX >= this.posX + 5 && mouseX < this.posX + 5 + controllerHeight && mouseY >= this.posY + this.height - 5 - controllerHeight && mouseY < this.posY + this.height - 5)
+			{
+				LiteModMCPlayer.thread.togglePausePlay();
+				return true;
+			}
+			else if (mouseX >= this.posX + 5 && mouseX < this.posX + 10 + (controllerHeight * 2) && mouseY >= this.posY + this.height - 5 - controllerHeight && mouseY < this.posY + this.height - 5)
+			{
+				LiteModMCPlayer.thread.schedulePrev();
+				return true;
+			}
+			else if (mouseX >= this.posX + 5 && mouseX < this.posX + 15 + (controllerHeight * 3) && mouseY >= this.posY + this.height - 5 - controllerHeight && mouseY < this.posY + this.height - 5)
+			{
+				LiteModMCPlayer.thread.scheduleNext();
+				return true;
+			} else return false;
+		}
+		else return false;
+	}
+
 	public void draw(Minecraft minecraft, int mouseX, int mouseY)
 	{
 		float barLength = this.width - 10;

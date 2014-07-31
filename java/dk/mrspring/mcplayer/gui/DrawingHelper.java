@@ -56,33 +56,6 @@ public class DrawingHelper
 
 	public static void drawPlayIcon(float xPos, float yPos, float width, float height, ReadableColor color, float alpha)
 	{
-		/*boolean isMouseHovering = ((mouseY >= y && mouseY < y + h) && (mouseX >= x && mouseX < x + w));
-
-		float width = w;
-		float height = h;
-
-		float xPos = x;
-		float yPos = y;
-
-		float alpha = a;
-
-		if (!isMouseHovering)
-			alpha = .5F;
-
-		drawRect(xPos, yPos, width, height, ReadableColor.BLACK, .5F);
-
-		drawRect(xPos, yPos, width, 1F, color, a);
-		drawRect(xPos, yPos + height - 1, width, 1F, color, a);
-
-		drawRect(xPos, yPos, 1F, height, color, a);
-		drawRect(xPos + width - 1, yPos, 1F, height, color, a);
-
-		height = (h / 10) * 6;
-		width = (w / 10) * 6;
-
-		yPos += (h / 10) * 2;
-		xPos += (w / 10) * 2;*/
-
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);
@@ -106,33 +79,6 @@ public class DrawingHelper
 
 	public static void drawPauseIcon(float xPos, float yPos, float width, float height, ReadableColor color, float alpha)
 	{
-		/*boolean isMouseHovering = ((mouseY >= y && mouseY < y + h) && (mouseX >= x && mouseX < x + w));
-
-		float width = w;
-		float height = h;
-
-		float xPos = x;
-		float yPos = y;
-
-		float alpha = a;
-
-		if (!isMouseHovering)
-			alpha = .5F;
-
-		drawRect(xPos, yPos, width, height, ReadableColor.BLACK, .5F);
-
-		drawRect(xPos, yPos, width, 1F, color, a);
-		drawRect(xPos, yPos + height - 1, width, 1F, color, a);
-
-		drawRect(xPos, yPos, 1F, height, color, a);
-		drawRect(xPos + width - 1, yPos, 1F, height, color, a);
-
-		height = (h / 10) * 6;
-		width = (w / 10) * 6;
-
-		yPos += (h / 10) * 2;
-		xPos += (w / 10) * 2;*/
-
 		drawRect(xPos, yPos, width / 3, height, color, alpha);
 		drawRect(xPos + ((width / 3) * 2), yPos, width / 3, height, color, alpha);
 	}

@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL11.glDisable;
  */
 public class DrawingHelper
 {
-	public static void drawRect(float x, float y, float width, float height, ReadableColor colour, float alpha)
+	public static void drawRect(float x, float y, float width, float height, Color colour, float alpha)
 	{
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
@@ -54,7 +54,7 @@ public class DrawingHelper
 		glDisable(GL_BLEND);
 	}
 
-	public static void drawPlayIcon(float xPos, float yPos, float width, float height, ReadableColor color, float alpha)
+	public static void drawPlayIcon(float xPos, float yPos, float width, float height, Color color, float alpha)
 	{
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
@@ -77,9 +77,32 @@ public class DrawingHelper
 		glDisable(GL_BLEND);
 	}
 
-	public static void drawPauseIcon(float xPos, float yPos, float width, float height, ReadableColor color, float alpha)
+	public static void drawPauseIcon(float xPos, float yPos, float width, float height, Color color, float alpha)
 	{
 		drawRect(xPos, yPos, width / 3, height, color, alpha);
 		drawRect(xPos + ((width / 3) * 2), yPos, width / 3, height, color, alpha);
+	}
+
+	public static void drawCustomQuad(float v1PosX, float v1PosY, float v2PosX, float v2PosY, float v3PosX, float v3PosY, float v4PosX, float v4PosY, Color color, float alpha)
+	{
+		glEnable(GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_CULL_FACE);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4f(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+
+		tessellator.addVertex(v1PosX, v1PosY, 0);
+		tessellator.addVertex(v2PosX, v2PosY, 0);
+		tessellator.addVertex(v3PosX, v3PosY, 0);
+		tessellator.addVertex(v4PosX, v4PosY, 0);
+
+		tessellator.draw();
+
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
 	}
 }

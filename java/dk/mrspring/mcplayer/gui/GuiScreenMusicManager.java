@@ -2,19 +2,15 @@ package dk.mrspring.mcplayer.gui;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.list.Playlist;
+import dk.mrspring.mcplayer.gui.fancy.GuiFancyButton;
+import dk.mrspring.mcplayer.gui.fancy.GuiMusicList;
+import dk.mrspring.mcplayer.gui.fancy.GuiMusicScrubber;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.ReadableColor;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.glDisable;
 
 /**
  * Created by MrSpring on 27-07-14 for MC Music Player.
@@ -53,7 +49,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	{
 		super.drawScreen(mouseX, mouseY, par3);
 
-		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, ReadableColor.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, Color.BLACK, 0.5F);
 
 		if (this.detailWidth > 0)
 			this.details.draw(this.mc);
@@ -76,13 +72,13 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.details.setShowing(this.list.getFocused());
 
 
-		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
-		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 50F, ReadableColor.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, Color.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 50F, Color.BLACK, 0.5F);
 
-		DrawingHelper.drawRect(0F, 49F, (float) this.width, 1F, ReadableColor.WHITE, 1F);
-		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 1F, ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(0F, 49F, (float) this.width, 1F, Color.WHITE, 1F);
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 1F, Color.WHITE, 1F);
 
-		if (this.list.selected != -1)
+		if (this.list.getSelected() != -1)
 		{
 			this.moveUpButton.setEnabled();
 			this.moveDownButton.setEnabled();
@@ -123,9 +119,9 @@ public class GuiScreenMusicManager extends GuiScreen
 
 		//System.out.println(" Key was pressed: " + par1 + ", ID: " + par2);
 		if (par2 == Keyboard.KEY_UP)
-			this.list.setSelected(this.list.selected - 1, true);
+			this.list.setSelected(this.list.getSelected() - 1, true);
 		else if (par2 == Keyboard.KEY_DOWN)
-			this.list.setSelected(this.list.selected + 1, true);
+			this.list.setSelected(this.list.getSelected() + 1, true);
 		else if (par2 == Keyboard.KEY_SPACE)
 			LiteModMCPlayer.thread.togglePausePlay();
 		else super.keyTyped(par1, par2);

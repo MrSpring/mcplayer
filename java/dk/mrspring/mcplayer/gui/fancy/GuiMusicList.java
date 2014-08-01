@@ -1,11 +1,12 @@
-package dk.mrspring.mcplayer.gui;
+package dk.mrspring.mcplayer.gui.fancy;
 
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.Color;
+import dk.mrspring.mcplayer.gui.DrawingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import org.lwjgl.util.ReadableColor;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -94,7 +95,7 @@ public class GuiMusicList
 			float alpha = 0.5F;
 			if (i == this.selected)
 				alpha = 0.75F;
-			DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, ReadableColor.BLACK, alpha);
+			DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, Color.BLACK, alpha);
 
 			file.bindCover(minecraft);
 			glDrawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
@@ -105,15 +106,15 @@ public class GuiMusicList
 			renderer.drawString(file.getAlbum(), this.perFileHeight, 25 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
 			renderer.drawString(file.getArtist(),this.perFileHeight, 35 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
 
-			DrawingHelper.drawRect(this.posX + this.width, this.posY + 5, 1, this.height - 10, ReadableColor.DKGREY, 0.75F);
+			DrawingHelper.drawRect(this.posX + this.width, this.posY + 5, 1, this.height - 10, Color.DKGREY, 0.75F);
 
 			if (i == this.selected)
 			{
-				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
-				DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, Color.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, Color.WHITE, 1F);
 
-				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
-				DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, ReadableColor.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, Color.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, Color.WHITE, 1F);
 			}
 			y += this.perFileHeight;
 		}
@@ -131,6 +132,11 @@ public class GuiMusicList
 
 		if (focus && selected >= 0)
 			this.scrollHeight = this.selected * this.perFileHeight;
+	}
+
+	public int getSelected()
+	{
+		return selected;
 	}
 
 	public MusicFile getFocused()
@@ -154,7 +160,7 @@ public class GuiMusicList
 
 	private void drawScrollbar()
 	{
-		DrawingHelper.drawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), ReadableColor.WHITE, 1F);
+		DrawingHelper.drawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), Color.WHITE, 1F);
 	}
 
 	private float getScrollbarY()

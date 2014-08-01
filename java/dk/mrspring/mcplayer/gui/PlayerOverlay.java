@@ -5,7 +5,6 @@ import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.util.ReadableColor;
 
 /**
  * Created by Konrad on 16-07-2014 for MC Music Player.
@@ -55,7 +54,7 @@ public class PlayerOverlay
 		if (!isSmall && additionalWidth < titleWidth + 10)
 			additionalWidth += 5F;*/
 
-        DrawingHelper.drawRect(5F, 5F, (width + additionalWidth), height, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+        DrawingHelper.drawRect(5F, 5F, (width + additionalWidth), height, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 
 
         // minecraft.getTextureManager().bindTexture(file.getCoverLocation());
@@ -73,7 +72,7 @@ public class PlayerOverlay
 		{
 			double progressThroughSong = thread.getPosition().toMillis() / thread.getLength().toMillis();
 			float progressBerHeight = 2.5F;
-			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, ReadableColor.CYAN, 1F);
+			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, Color.CYAN, 1F);
 
 			String nextTitle = thread.getNextInQueue().getTitle();
 			String nextArtist = thread.getNextInQueue().getArtist();
@@ -82,8 +81,8 @@ public class PlayerOverlay
 
 			if (nextUpHeight != 0F)
 			{
-				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
-				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, 1F, ReadableColor.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, 1F, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
 			}
 
 			if (progressThroughSong > LiteModMCPlayer.config.getNextUpDecimal())

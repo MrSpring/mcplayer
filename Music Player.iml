@@ -36,10 +36,12 @@
       <library>
         <CLASSES>
           <root url="jar://$USER_HOME$/Desktop/jaudiotagger-2.2.0-20130321.142353-1.jar!/" />
+          <root url="jar://$MCP_LOC$/jars/libraries/org/jaudiotagger/jaudiotagger/2.2.0-20130321.142353-1/jaudiotagger-2.2.0-20130321.142353-1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/Desktop/jaudiotagger-2.2.0-20130321.142353-1-sources.jar!/" />
+          <root url="jar://$MCP_LOC$/jars/libraries/org/jaudiotagger/jaudiotagger/2.2.0-20130321.142353-1/jaudiotagger-2.2.0-20130321.142353-1-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

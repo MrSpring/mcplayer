@@ -8,12 +8,14 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.gui.*;
+import dk.mrspring.mcplayer.gui.GuiColorScheme;
+import dk.mrspring.mcplayer.gui.GuiScreenMusicManager;
+import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
+import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import javafx.embed.swing.JFXPanel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
@@ -47,29 +49,20 @@ public class LiteModMCPlayer implements Tickable, Configurable
     @Override
     public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
     {
-		if (openWelcomeScreen.isPressed())
-			minecraft.displayGuiScreen(new GuiWelcomeScreen(minecraft.currentScreen));
+        if (sizeToggler.isPressed())
+            config.toggleOverlaySize();
+        if (pausePlay.isPressed())
+            thread.togglePausePlay();
+        if (playNext.isPressed())
+            thread.scheduleNext();
+        if (playPrev.isPressed())
+            thread.schedulePrev();
+        if (openGui.isPressed())
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager(minecraft.currentScreen));
 
-		if (config.hasShownWelcomeScreen())
-		{
-			if (sizeToggler.isPressed())
-				config.toggleOverlaySize();
-			if (pausePlay.isPressed())
-				thread.togglePausePlay();
-			if (playNext.isPressed())
-				thread.scheduleNext();
-			if (playPrev.isPressed())
-				thread.schedulePrev();
-			if (openGui.isPressed())
-				Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager(minecraft.currentScreen));
+        thread.setVolume(config.getVolume());
 
-			thread.setVolume(config.getVolume());
-
-			if (!(minecraft.currentScreen instanceof GuiScreenMusicManager))
-				PlayerOverlay.render(minecraft.fontRenderer, !config.getOverlaySize(), minecraft, thread);
-		} /*else if (minecraft.currentScreen != null)
-			if (minecraft.currentScreen instanceof GuiMainMenu)
-				minecraft.displayGuiScreen(new GuiWelcomeScreen(minecraft.currentScreen));*/
+        PlayerOverlay.render(!config.getOverlaySize(), minecraft, thread);
 	}
 
     @Override
@@ -144,18 +137,15 @@ public class LiteModMCPlayer implements Tickable, Configurable
 		LiteLoader.getInput().registerKeyBinding(openGui);
 		LiteLoader.getInput().registerKeyBinding(openWelcomeScreen);
 
-        if (config.hasShownWelcomeScreen())
-		{
-			coverLocation.mkdirs();
+        coverLocation.mkdirs();
 
-			supportedExtensions.add(".mp3");
+        supportedExtensions.add(".mp3");
 
-			FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
-			System.out.println(" Music Path: " + config.music_path);
+        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+        System.out.println(" Music Path: " + config.music_path);
 
-			thread = new MusicManagerThread(allFiles);
-			thread.start();
-		}
+        thread = new MusicManagerThread(allFiles);
+        thread.start();
     }
 
     @Override

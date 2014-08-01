@@ -23,7 +23,6 @@ public class MusicManagerThread extends Thread
 
     public int state = NOT_INITIALIZED;
     public double volume = 1.0;
-    public double oldVolume = volume;
 
     public MusicFile currentlyPlaying;
     public MusicFile nextInQueue;
@@ -44,8 +43,7 @@ public class MusicManagerThread extends Thread
             this.currentlyPlaying = this.queue.get(0);
             this.nextInQueue = this.queue.get(1);
 
-            if (this.volume != this.oldVolume)
-                this.player.setVolume(this.volume);
+            this.player.setVolume(this.volume);
 
             switch (this.state)
             {
@@ -58,7 +56,6 @@ public class MusicManagerThread extends Thread
                 case SCHEDULED_FOR_NEXT: this.playInQueue(1); break;
                 case SCHEDULED_FOR_PREV: this.playInQueue(-1);break;
             }
-            this.oldVolume = this.volume;
         }
 
         this.player.stopPlaying();

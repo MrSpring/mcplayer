@@ -10,7 +10,6 @@ public class ModConfig
     public boolean overlay_size = true;
     public String music_path = System.getProperty("user.home") + "\\Music";
 	public double volume = 1;
-	public boolean has_shown_welcome_screen = false;
 
 	public float getOverlayAlpha()
 	{
@@ -27,16 +26,6 @@ public class ModConfig
 	{
 		double temp = this.percent_before_showing_next_up;
 		return temp / 100;
-	}
-
-	public boolean hasShownWelcomeScreen()
-	{
-		return this.has_shown_welcome_screen;
-	}
-
-	public void setShownWelcomeScreen()
-	{
-		this.has_shown_welcome_screen = true;
 	}
 
     public String getMusicPath()

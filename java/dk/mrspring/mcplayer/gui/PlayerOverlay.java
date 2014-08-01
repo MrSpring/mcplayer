@@ -3,7 +3,6 @@ package dk.mrspring.mcplayer.gui;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -24,15 +23,15 @@ public class PlayerOverlay
 
 	private static float nextUpHeight = 0F;
 
-	public static void render(FontRenderer fontRenderer, boolean isSmall, Minecraft minecraft, MusicManagerThread thread)
+	public static void render(boolean isSmall, Minecraft minecraft, MusicManagerThread thread)
     {
 		String song = thread.getCurrentlyPlaying().getTitle();
 		String album = thread.getCurrentlyPlaying().getAlbum();
 		String artist = thread.getCurrentlyPlaying().getArtist();
 
-        int songWidth = fontRenderer.getStringWidth(song);
-        int albumWidth = fontRenderer.getStringWidth(album);
-        int artistWidth = fontRenderer.getStringWidth(artist);
+        int songWidth = minecraft.fontRenderer.getStringWidth(song);
+        int albumWidth = minecraft.fontRenderer.getStringWidth(album);
+        int artistWidth = minecraft.fontRenderer.getStringWidth(artist);
 
         int targetWidth = Math.max(songWidth, Math.max(albumWidth, artistWidth));
 
@@ -77,7 +76,7 @@ public class PlayerOverlay
 			String nextTitle = thread.getNextInQueue().getTitle();
 			String nextArtist = thread.getNextInQueue().getArtist();
 
-			int nextUpWidth = fontRenderer.getStringWidth(nextTitle + " by " + nextArtist);
+			int nextUpWidth = minecraft.fontRenderer.getStringWidth(nextTitle + " by " + nextArtist);
 
 			if (nextUpHeight != 0F)
 			{
@@ -89,9 +88,9 @@ public class PlayerOverlay
 			{
 				if (nextUpHeight == 30F)
 				{
-					fontRenderer.drawString("Next Up:", 5 + 5, 5 + 80 + 5, 0xFFFFFF, true);
-					fontRenderer.drawString(nextTitle, 5 + 5, 5 + 80 + 16, 0xFFFFFF, true);
-					fontRenderer.drawString(" by " + nextArtist, 5 + 5 + fontRenderer.getStringWidth(nextTitle), 5 + 80 + 16, 0xBBBBBB, true);
+                    minecraft.fontRenderer.drawString("Next Up:", 5 + 5, 5 + 80 + 5, 0xFFFFFF, true);
+                    minecraft.fontRenderer.drawString(nextTitle, 5 + 5, 5 + 80 + 16, 0xFFFFFF, true);
+                    minecraft.fontRenderer.drawString(" by " + nextArtist, 5 + 5 + minecraft.fontRenderer.getStringWidth(nextTitle), 5 + 80 + 16, 0xBBBBBB, true);
 				}
 
 				if (nextUpHeight < 30F)
@@ -108,9 +107,9 @@ public class PlayerOverlay
 
         if (additionalWidth == oldAdditionalWidth && !isSmall)
         {
-            fontRenderer.drawString(song, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
-            fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xBBBBBB, true);
-            fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xBBBBBB, true);
+            minecraft.fontRenderer.drawString(song, 5 + 80 + 5, 5 + 10, 0xFFFFFF, true);
+            minecraft.fontRenderer.drawString(album, 5 + 80 + 5, 5 + 21, 0xBBBBBB, true);
+            minecraft.fontRenderer.drawString(artist, 5 + 80 + 5, 5 + 32, 0xBBBBBB, true);
         }
 
         oldAdditionalWidth = additionalWidth;

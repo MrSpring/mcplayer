@@ -7,8 +7,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
-import java.io.File;
-
 /**
  * Created by Konrad on 02-07-2014.
  */
@@ -18,6 +16,7 @@ public class MusicPlayerThread extends Thread
     protected final Duration playFrom;
 
     protected MediaPlayer player;
+    double volume;
 
     public MusicPlayerThread(@NotNull MusicFile toPlay)
     {
@@ -92,7 +91,10 @@ public class MusicPlayerThread extends Thread
 
     public synchronized void setVolume(double volume)
     {
-        this.player.setVolume(volume);
+        if (this.volume != volume)
+            this.player.setVolume(volume);
+
+        this.volume = volume;
     }
 
     public synchronized Duration getMediaLength()

@@ -41,7 +41,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.doneButton = new GuiFancyButton(5, this.height - 50 + 6, 50, 39, "gui.done");
 		this.moveUpButton = new GuiFancyButton(70, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_up").setDisabled();
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
-		this.shuffleButton = new GuiFancyButton(205, this.height - 50 + 6, 50, 39, "gui.mcplayer.shuffle_music");
+		this.shuffleButton = new GuiFancyButton(210, this.height - 50 + 6, 80, 39, "gui.mcplayer.shuffle_music");
 
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);

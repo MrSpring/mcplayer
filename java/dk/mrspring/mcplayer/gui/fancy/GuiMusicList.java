@@ -107,6 +107,8 @@ public class GuiMusicList
 		int y = 0;
 		for (int i = 0; i < LiteModMCPlayer.allFiles.size(); i++)
 		{
+			// TODO Only Render if inside view, for better performance
+
 			MusicFile file = LiteModMCPlayer.allFiles.get(i);
 			float alpha = scheme.getBaseAlpha();
 			if (i == this.selected)

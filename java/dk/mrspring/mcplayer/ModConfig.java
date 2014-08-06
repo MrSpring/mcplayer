@@ -1,5 +1,7 @@
 package dk.mrspring.mcplayer;
 
+import dk.mrspring.mcplayer.gui.Color;
+
 /**
  * Created by MrSpring on 25-07-14 for MC Music Player.
  */
@@ -10,10 +12,18 @@ public class ModConfig
     public boolean overlay_size = true;
     public String music_path = System.getProperty("user.home") + "\\Music";
 	public double volume = 1;
+	public String color_scheme = "HIGH_CONTRAST";
 
 	public float getOverlayAlpha()
 	{
 		return this.overlay_transparency;
+	}
+
+	public ColorScheme getColorScheme()
+	{
+		if (ColorScheme.valueOf(this.color_scheme) != null)
+			return ColorScheme.valueOf(this.color_scheme);
+		else return ColorScheme.HIGH_CONTRAST;
 	}
 
     public int getOverlayAlphaAsPercentage()

@@ -8,7 +8,6 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
-import dk.mrspring.mcplayer.gui.GuiColorScheme;
 import dk.mrspring.mcplayer.gui.GuiScreenMusicManager;
 import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
@@ -31,13 +30,12 @@ import java.util.concurrent.CountDownLatch;
 public class LiteModMCPlayer implements Tickable, Configurable
 {
 	public static ModConfig config;
-	public static GuiColorScheme colorScheme;
-    private static KeyBinding sizeToggler = new KeyBinding("key.mcplayer.toggle_size", Keyboard.KEY_F12, "key.categories.litemods");
-    private static KeyBinding pausePlay = new KeyBinding("key.mcplayer.pause_play", Keyboard.KEY_P, "key.categories.litemods");
-	private static KeyBinding playNext = new KeyBinding("key.mcplayer.play_next", Keyboard.KEY_RIGHT, "key.categories.litemods");
-	private static KeyBinding playPrev = new KeyBinding("key.mcplayer.play_prev", Keyboard.KEY_LEFT, "key.categories.litemods");
-	private static KeyBinding openGui = new KeyBinding("key.mcplayer.open_gui", Keyboard.KEY_G, "key.categories.litemods");
-	private static KeyBinding openWelcomeScreen = new KeyBinding("key.mcplayer.open_welcome_screen", Keyboard.KEY_R, "key.categories.litemods");
+    public static KeyBinding sizeToggler = new KeyBinding("key.mcplayer.toggle_size", Keyboard.KEY_F12, "key.categories.litemods");
+	public static KeyBinding pausePlay = new KeyBinding("key.mcplayer.pause_play", Keyboard.KEY_P, "key.categories.litemods");
+	public static KeyBinding playNext = new KeyBinding("key.mcplayer.play_next", Keyboard.KEY_RIGHT, "key.categories.litemods");
+	public static KeyBinding playPrev = new KeyBinding("key.mcplayer.play_prev", Keyboard.KEY_LEFT, "key.categories.litemods");
+	public static KeyBinding openGui = new KeyBinding("key.mcplayer.open_gui", Keyboard.KEY_G, "key.categories.litemods");
+	public static KeyBinding openWelcomeScreen = new KeyBinding("key.mcplayer.open_welcome_screen", Keyboard.KEY_R, "key.categories.litemods");
 
     public static File coverLocation = new File("mcplayer/covers");
     public static File configFile;
@@ -62,7 +60,8 @@ public class LiteModMCPlayer implements Tickable, Configurable
 
         thread.setVolume(config.getVolume());
 
-        PlayerOverlay.render(!config.getOverlaySize(), minecraft, thread);
+		if (!(minecraft.currentScreen instanceof GuiScreenMusicManager))
+        	PlayerOverlay.render(!config.getOverlaySize(), minecraft, thread);
 	}
 
     @Override
@@ -81,7 +80,6 @@ public class LiteModMCPlayer implements Tickable, Configurable
     public void init(File configPath)
     {
 		config = new ModConfig();
-		colorScheme = new GuiColorScheme();
 
 		configFile = new File(configPath.getAbsolutePath() + "\\MC Music Player.json");
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

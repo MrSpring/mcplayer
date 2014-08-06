@@ -43,7 +43,8 @@ public class MusicManagerThread extends Thread
             this.currentlyPlaying = this.queue.get(0);
             this.nextInQueue = this.queue.get(1);
 
-            this.player.setVolume(this.volume);
+			if (this.player != null)
+	            this.player.setVolume(this.volume);
 
             switch (this.state)
             {
@@ -58,7 +59,8 @@ public class MusicManagerThread extends Thread
             }
         }
 
-        this.player.stopPlaying();
+		if (this.player != null)
+	        this.player.stopPlaying();
     }
 
     public void initialize()
@@ -201,7 +203,9 @@ public class MusicManagerThread extends Thread
 
     public Duration getLength()
     {
-        return this.player.getMediaLength();
+		if (this.player != null)
+	        return this.player.getMediaLength();
+		else return Duration.ZERO;
     }
 
     public synchronized void togglePausePlay()

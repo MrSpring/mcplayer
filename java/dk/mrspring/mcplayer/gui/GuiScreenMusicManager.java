@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.gui;
 
+import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.fancy.GuiFancyButton;
@@ -47,9 +48,11 @@ public class GuiScreenMusicManager extends GuiScreen
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3)
 	{
+		ColorScheme scheme = LiteModMCPlayer.config.getColorScheme();
+
 		super.drawScreen(mouseX, mouseY, par3);
 
-		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, Color.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
 		if (this.detailWidth > 0)
 			this.details.draw(this.mc);
@@ -72,11 +75,11 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.details.setShowing(this.list.getFocused());
 
 
-		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, Color.BLACK, 0.5F);
-		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 50F, Color.BLACK, 0.5F);
+		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, scheme.getBaseColor(), scheme.getBaseAlpha());
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 50F, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		DrawingHelper.drawRect(0F, 49F, (float) this.width, 1F, Color.WHITE, 1F);
-		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 1F, Color.WHITE, 1F);
+		DrawingHelper.drawRect(0F, 49F, (float) this.width, 1F, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(0F, (float) this.height - 50, (float) this.width, 1F, scheme.getOutlineColor(), 1F);
 
 		if (this.list.getSelected() != -1)
 		{
@@ -116,14 +119,16 @@ public class GuiScreenMusicManager extends GuiScreen
 	@Override
 	protected void keyTyped(char par1, int par2)
 	{
-
-		//System.out.println(" Key was pressed: " + par1 + ", ID: " + par2);
 		if (par2 == Keyboard.KEY_UP)
 			this.list.setSelected(this.list.getSelected() - 1, true);
 		else if (par2 == Keyboard.KEY_DOWN)
 			this.list.setSelected(this.list.getSelected() + 1, true);
 		else if (par2 == Keyboard.KEY_SPACE)
 			LiteModMCPlayer.thread.togglePausePlay();
+		else if (par2 == LiteModMCPlayer.playNext.getKeyCode())
+			LiteModMCPlayer.thread.scheduleNext();
+		else if (par2 == LiteModMCPlayer.playPrev.getKeyCode())
+			LiteModMCPlayer.thread.schedulePrev();
 		else super.keyTyped(par1, par2);
 	}
 

@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.gui;
 
+import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,8 @@ public class PlayerOverlay
 
 	public static void render(boolean isSmall, Minecraft minecraft, MusicManagerThread thread)
     {
+		ColorScheme scheme = LiteModMCPlayer.config.getColorScheme();
+
 		String song = thread.getCurrentlyPlaying().getTitle();
 		String album = thread.getCurrentlyPlaying().getAlbum();
 		String artist = thread.getCurrentlyPlaying().getArtist();
@@ -53,7 +56,7 @@ public class PlayerOverlay
 		if (!isSmall && additionalWidth < titleWidth + 10)
 			additionalWidth += 5F;*/
 
-        DrawingHelper.drawRect(5F, 5F, (width + additionalWidth), height, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+        DrawingHelper.drawRect(5F, 5F, (width + additionalWidth), height, scheme.getBaseColor(), LiteModMCPlayer.config.getOverlayAlpha());
 
 
         // minecraft.getTextureManager().bindTexture(file.getCoverLocation());
@@ -71,7 +74,7 @@ public class PlayerOverlay
 		{
 			double progressThroughSong = thread.getPosition().toMillis() / thread.getLength().toMillis();
 			float progressBerHeight = 2.5F;
-			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, Color.CYAN, 1F);
+			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, scheme.getProgressbarColor(), 1F);
 
 			String nextTitle = thread.getNextInQueue().getTitle();
 			String nextArtist = thread.getNextInQueue().getArtist();
@@ -80,8 +83,8 @@ public class PlayerOverlay
 
 			if (nextUpHeight != 0F)
 			{
-				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
-				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, 1F, Color.BLACK, LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, nextUpHeight, scheme.getBaseColor(), LiteModMCPlayer.config.getOverlayAlpha());
+				DrawingHelper.drawRect(5F, 5F + height, nextUpWidth + 10, 1F, scheme.getBaseColor(), LiteModMCPlayer.config.getOverlayAlpha());
 			}
 
 			if (progressThroughSong > LiteModMCPlayer.config.getNextUpDecimal())

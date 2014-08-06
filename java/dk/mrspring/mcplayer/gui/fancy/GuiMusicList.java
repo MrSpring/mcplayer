@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.gui.fancy;
 
+import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.Color;
@@ -88,14 +89,16 @@ public class GuiMusicList
 
 	public void draw(Minecraft minecraft, int mouseX, int mouseY)
 	{
+		ColorScheme scheme = LiteModMCPlayer.config.getColorScheme();
+
 		int y = 0;
 		for (int i = 0; i < LiteModMCPlayer.allFiles.size(); i++)
 		{
 			MusicFile file = LiteModMCPlayer.allFiles.get(i);
-			float alpha = 0.5F;
+			float alpha = scheme.getBaseAlpha();
 			if (i == this.selected)
-				alpha = 0.75F;
-			DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, Color.BLACK, alpha);
+				alpha += .25F;
+			DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, scheme.getBaseColor(), alpha);
 
 			file.bindCover(minecraft);
 			glDrawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
@@ -110,11 +113,11 @@ public class GuiMusicList
 
 			if (i == this.selected)
 			{
-				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, Color.WHITE, 1F);
-				DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, Color.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, scheme.getOutlineColor(), 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, scheme.getOutlineColor(), 1F);
 
-				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, Color.WHITE, 1F);
-				DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, Color.WHITE, 1F);
+				DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, scheme.getOutlineColor(), 1F);
+				DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, scheme.getOutlineColor(), 1F);
 			}
 			y += this.perFileHeight;
 		}
@@ -122,7 +125,7 @@ public class GuiMusicList
 		//if (this.canScrollbarScroll(1))
 		//	this.scrollHeight++;
 
-		this.drawScrollbar();
+		this.drawScrollbar(scheme);
 	}
 
 	public void setSelected(int selected, boolean focus)
@@ -158,9 +161,9 @@ public class GuiMusicList
 		} else return false;
 	}
 
-	private void drawScrollbar()
+	private void drawScrollbar(ColorScheme scheme)
 	{
-		DrawingHelper.drawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), Color.WHITE, 1F);
+		DrawingHelper.drawRect(this.width - 10, this.posY + this.getScrollbarY(), 5, this.getScrollbarHeight(), scheme.getOutlineColor(), 1F);
 	}
 
 	private float getScrollbarY()

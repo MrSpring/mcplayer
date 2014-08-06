@@ -1,5 +1,6 @@
 package dk.mrspring.mcplayer.gui.fancy;
 
+import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.gui.Color;
 import dk.mrspring.mcplayer.gui.DrawingHelper;
@@ -87,6 +88,8 @@ public class GuiMusicScrubber extends Gui
 
 	public void draw(Minecraft minecraft, int mouseX, int mouseY)
 	{
+		ColorScheme scheme = LiteModMCPlayer.config.getColorScheme();
+
 		float barLength = this.width - 10;
 
 		float barPosX = this.posX + 5;
@@ -151,19 +154,19 @@ public class GuiMusicScrubber extends Gui
 
 
 		if (this.solidBackground)
-			DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, Color.BLACK, 1F);
-		else DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, Color.BLACK, 0.5F);
+			DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, scheme.getBaseColor(), 1F);
+		else DrawingHelper.drawRect(this.posX, this.posY, this.width, this.height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		DrawingHelper.drawRect(this.posX, this.posY, this.width, 1F, Color.WHITE, 1F);
-		DrawingHelper.drawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, Color.WHITE, 1F);
+		DrawingHelper.drawRect(this.posX, this.posY, this.width, 1F, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(this.posX, (this.posY + this.height) - 1F, this.width, 1F, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawRect(this.posX, this.posY, 1F, this.height, Color.WHITE, 1F);
-		DrawingHelper.drawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, Color.WHITE, 1F);
+		DrawingHelper.drawRect(this.posX, this.posY, 1F, this.height, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect((this.posX + this.width) - 1F, this.posY, 1F, this.height, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawRect(barPosX, barPosY, barLength, 1, Color.WHITE, 0.5F);
-		DrawingHelper.drawRect(barPosX, barPosY - 1, barLength * (float) playHeadPosition, 3, Color.WHITE, 1F);
+		DrawingHelper.drawRect(barPosX, barPosY, barLength, 1, scheme.getProgressbarColor(), scheme.getBaseAlpha());
+		DrawingHelper.drawRect(barPosX, barPosY - 1, barLength * (float) playHeadPosition, 3, scheme.getProgressbarColor(), 1F);
 
-		DrawingHelper.drawRect(playHeadPosX, playHeadPosY, 5, 5, Color.WHITE, this.cubeAlpha);
+		DrawingHelper.drawRect(playHeadPosX, playHeadPosY, 5, 5, scheme.getOutlineColor(), this.cubeAlpha);
 
 		if (this.showTitle)
 		{
@@ -178,15 +181,15 @@ public class GuiMusicScrubber extends Gui
 			float controlPosX = this.posX + 5;
 			float controlPosY = barPosY - (controlDiameter / 2);
 
-			this.drawPlayPauseControl(controlPosX, controlPosY, controlDiameter, controlDiameter, Color.WHITE, mouseX, mouseY);
+			this.drawPlayPauseControl(controlPosX, controlPosY, controlDiameter, controlDiameter, mouseX, mouseY, scheme);
 
 			controlPosX += controlDiameter + 5;
 
-			this.drawPlayPreviousControl(controlPosX, controlPosY, controlDiameter, controlDiameter, Color.WHITE, mouseX, mouseY);
+			this.drawPlayPreviousControl(controlPosX, controlPosY, controlDiameter, controlDiameter, mouseX, mouseY, scheme);
 
 			controlPosX += controlDiameter + 5;
 
-			this.drawPlayNextControl(controlPosX, controlPosY, controlDiameter, controlDiameter, Color.WHITE, mouseX, mouseY);
+			this.drawPlayNextControl(controlPosX, controlPosY, controlDiameter, controlDiameter, mouseX, mouseY, scheme);
 		}
 
 		/*this.isPlayheadClicked = mouseX >= this.posX + 5 && mouseX < this.posX + this.width - 5 && Mouse.isButtonDown(0) && mouseY >= this.posY && mouseY < this.posY + this.height + 5;
@@ -271,62 +274,62 @@ public class GuiMusicScrubber extends Gui
 		}*/
 	}
 
-	private void drawPlayPauseControl(float x, float y, float width, float height, Color color, int mouseX, int mouseY)
+	private void drawPlayPauseControl(float x, float y, float width, float height, int mouseX, int mouseY, ColorScheme scheme)
 	{
-		float alpha = .5F;
+		float alpha = scheme.getBaseAlpha();
 
 		if ((mouseY >= y && mouseY < y + height) && (mouseX >= x && mouseX < x + width))
-			alpha = 1F;
+			alpha += .5F;
 
-		DrawingHelper.drawRect(x, y, width, height, Color.BLACK, .5F);
+		DrawingHelper.drawRect(x, y, width, height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		DrawingHelper.drawRect(x, y, width, 1F, color, 1F);
-		DrawingHelper.drawRect(x, y + height - 1, width, 1F, color, 1F);
+		DrawingHelper.drawRect(x, y, width, 1F, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x, y + height - 1, width, 1F, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawRect(x, y, 1F, height, color, 1F);
-		DrawingHelper.drawRect(x + width - 1, y, 1F, height, color, 1F);
+		DrawingHelper.drawRect(x, y, 1F, height, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x + width - 1, y, 1F, height, scheme.getOutlineColor(), 1F);
 
 		if (LiteModMCPlayer.thread.isPaused())
-			DrawingHelper.drawPlayIcon(x + ((width / 10) * 2), y + ((height / 10) * 2), width - ((width / 10) * 4), height - ((height / 10) * 4), color, alpha);
-		else DrawingHelper.drawPauseIcon(x + ((width / 10) * 2), y + ((height / 10) * 2), width - ((width / 10) * 4), height - ((height / 10) * 4), color, alpha);
+			DrawingHelper.drawPlayIcon(x + ((width / 10) * 2), y + ((height / 10) * 2), width - ((width / 10) * 4), height - ((height / 10) * 4), scheme.getOutlineColor(), alpha);
+		else DrawingHelper.drawPauseIcon(x + ((width / 10) * 2), y + ((height / 10) * 2), width - ((width / 10) * 4), height - ((height / 10) * 4), scheme.getOutlineColor(), alpha);
 	}
 
-	private void drawPlayNextControl(float x, float y, float width, float height, Color color, int mouseX, int mouseY)
+	private void drawPlayNextControl(float x, float y, float width, float height, int mouseX, int mouseY, ColorScheme scheme)
 	{
-		float alpha = .5F;
+		float alpha = scheme.getBaseAlpha();
 
 		if ((mouseY >= y && mouseY < y + height) && (mouseX >= x && mouseX < x + width))
-			alpha = 1F;
+			alpha += .5F;
 
-		DrawingHelper.drawRect(x, y, width, height, Color.BLACK, .5F);
+		DrawingHelper.drawRect(x, y, width, height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		DrawingHelper.drawRect(x, y, width, 1F, color, 1F);
-		DrawingHelper.drawRect(x, y + height - 1, width, 1F, color, 1F);
+		DrawingHelper.drawRect(x, y, width, 1F, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x, y + height - 1, width, 1F, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawRect(x, y, 1F, height, color, 1F);
-		DrawingHelper.drawRect(x + width - 1, y, 1F, height, color, 1F);
+		DrawingHelper.drawRect(x, y, 1F, height, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x + width - 1, y, 1F, height, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawPlayIcon(x + ((width / 10) * 2), y + (height / 4), width / 3, height / 2, color, alpha);
-		DrawingHelper.drawPlayIcon(x + ((width / 10) * 2) + (width / 3), y + (height / 4), width / 3, height / 2, color, alpha);
+		DrawingHelper.drawPlayIcon(x + ((width / 10) * 2), y + (height / 4), width / 3, height / 2, scheme.getOutlineColor(), alpha);
+		DrawingHelper.drawPlayIcon(x + ((width / 10) * 2) + (width / 3), y + (height / 4), width / 3, height / 2, scheme.getOutlineColor(), alpha);
 	}
 
-	private void drawPlayPreviousControl(float x, float y, float width, float height, Color color, int mouseX, int mouseY)
+	private void drawPlayPreviousControl(float x, float y, float width, float height, int mouseX, int mouseY, ColorScheme scheme)
 	{
-		float alpha = .5F;
+		float alpha = scheme.getBaseAlpha();
 
 		if ((mouseY >= y && mouseY < y + height) && (mouseX >= x && mouseX < x + width))
-			alpha = 1F;
+			alpha += .5F;
 
-		DrawingHelper.drawRect(x, y, width, height, Color.BLACK, .5F);
+		DrawingHelper.drawRect(x, y, width, height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		DrawingHelper.drawRect(x, y, width, 1F, color, 1F);
-		DrawingHelper.drawRect(x, y + height - 1, width, 1F, color, 1F);
+		DrawingHelper.drawRect(x, y, width, 1F, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x, y + height - 1, width, 1F, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawRect(x, y, 1F, height, color, 1F);
-		DrawingHelper.drawRect(x + width - 1, y, 1F, height, color, 1F);
+		DrawingHelper.drawRect(x, y, 1F, height, scheme.getOutlineColor(), 1F);
+		DrawingHelper.drawRect(x + width - 1, y, 1F, height, scheme.getOutlineColor(), 1F);
 
-		DrawingHelper.drawPlayIcon(x + width - (((width / 10) * 2)), y + height - (height / 4), -(width / 3), -(height / 2), color, alpha);
-		DrawingHelper.drawPlayIcon(x + width - (((width / 10) * 2) + (width / 3)), y + height - (height / 4), -(width / 3), -(height / 2), color, alpha);
+		DrawingHelper.drawPlayIcon(x + width - (((width / 10) * 2)), y + height - (height / 4), -(width / 3), -(height / 2), scheme.getOutlineColor(), alpha);
+		DrawingHelper.drawPlayIcon(x + width - (((width / 10) * 2) + (width / 3)), y + height - (height / 4), -(width / 3), -(height / 2), scheme.getOutlineColor(), alpha);
 
 		//DrawingHelper.drawPlayIcon(x + ((width / 10) * 2), y + (height / 4), width / 3, height / 2, color, alpha);
 		//DrawingHelper.drawPlayIcon(x + ((width / 10) * 2) + (width / 3), y + (height / 4), width / 3, height / 2, color, alpha);

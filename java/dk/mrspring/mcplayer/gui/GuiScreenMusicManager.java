@@ -24,9 +24,11 @@ public class GuiScreenMusicManager extends GuiScreen
 	GuiFancyButton moveUpButton;
 	GuiFancyButton moveDownButton;
 	GuiFancyButton shuffleButton;
+
 	GuiMusicList list;
 	MusicDetails details;
 	GuiMusicScrubber scrubber;
+
 	int detailWidth = 0;
 
 	public GuiScreenMusicManager(GuiScreen previousScreen)
@@ -67,8 +69,14 @@ public class GuiScreenMusicManager extends GuiScreen
 
 		if (this.detailWidth < 0)
 			this.detailWidth = 0;
-		else if (this.detailWidth > this.width / 2)
-			this.detailWidth = this.width / 2;
+		else if (this.width > 490)
+		{
+			if (this.detailWidth > this.width / 2)
+				this.detailWidth = this.width / 2;
+		} else if (this.detailWidth > this.width)
+			this.detailWidth = this.width;
+		/*if (this.detailWidth > this.width / 2)
+			this.detailWidth = this.width / 2;*/
 
 		this.list.setWidth(this.width - this.detailWidth);
 		this.details.setWidth(this.detailWidth);
@@ -170,17 +178,44 @@ public class GuiScreenMusicManager extends GuiScreen
 			if (this.width != 0 && this.showing != null)
 			{
 				this.showing.bindCover(minecraft);
-				DrawingHelper.drawTexturedRect(this.posX + 10, this.posY + 10, this.width / 3, this.width / 3, 0, 0, 512, 512, 1F);
 
-				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":", this.posX + (this.width / 3) + 15, this.posY + 20, 0xEEEEEE, true);
-				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":", this.posX + (this.width / 3) + 15, this.posY + 35, 0xEEEEEE, true);
-				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":", this.posX + (this.width / 3) + 15, this.posY + 50, 0xEEEEEE, true);
+				int artWorkSize = this.width / 3;
 
-				minecraft.fontRenderer.drawString(this.showing.getTitle(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":"), this.posY + 20, 0xEEEEEE, true);
-				minecraft.fontRenderer.drawString(this.showing.getAlbum(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":"), this.posY + 35, 0xEEEEEE, true);
-				minecraft.fontRenderer.drawString(this.showing.getArtist(), this.posX + (this.width / 3) + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":"), this.posY + 50, 0xEEEEEE, true);
+				if (artWorkSize > this.height - 20)
+					artWorkSize = this.height - 20;
 
-				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":", this.posX + 10, this.posY + (this.width / 3) + 15, 0xEEEEEE, true);
+				DrawingHelper.drawTexturedRect(this.posX + 10, this.posY + 10, artWorkSize, artWorkSize, 0, 0, 512, 512, 1F);
+
+				int textBasePosX, textBasePosY;
+				if (this.height - (artWorkSize) <= 45)
+				{
+					textBasePosX = this.posX + artWorkSize + 15;
+					textBasePosY = this.posY + 5 + 60;
+				} else
+				{
+					textBasePosX = this.posX + 5;
+					textBasePosY = this.posY + artWorkSize + 10;
+				}
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":", this.posX + artWorkSize + 15, this.posY + 20, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":", this.posX + artWorkSize + 15, this.posY + 35, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":", this.posX + artWorkSize + 15, this.posY + 50, 0xEEEEEE, true);
+
+				minecraft.fontRenderer.drawString(this.showing.getTitle(), this.posX + artWorkSize + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":"), this.posY + 20, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getAlbum(), this.posX + artWorkSize + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_album") + ":"), this.posY + 35, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getArtist(), this.posX + artWorkSize + 20 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_artist") + ":"), this.posY + 50, 0xEEEEEE, true);
+
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":", textBasePosX, textBasePosY, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getGenre(), textBasePosX + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_genre")) + 5, textBasePosY, 0xFFFFFF, true);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_year") + ":", textBasePosX, textBasePosY + 10, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getYear(), textBasePosX + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_year")) + 5, textBasePosY + 10, 0xFFFFFF, true);
+
+				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_composer") + ":", textBasePosX, textBasePosY + 20, 0xEEEEEE, true);
+				minecraft.fontRenderer.drawString(this.showing.getComposer(), textBasePosX + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_composer")) + 5, textBasePosY + 20, 0xFFFFFF, true);
+
+				/*minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":", this.posX + 10, this.posY + (this.width / 3) + 15, 0xEEEEEE, true);
 				minecraft.fontRenderer.drawString(this.showing.getGenre(), this.posX + 15 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_genre") + ":"), this.posY + (this.width / 3) + 15, 0xEEEEEE, true);
 
 				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_year") + ":", this.posX + 10, this.posY + (this.width / 3) + 25, 0xEEEEEE, true);
@@ -188,7 +223,7 @@ public class GuiScreenMusicManager extends GuiScreen
 
 				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_composer") + ":", this.posX + 10, this.posY + (this.width / 3) + 35, 0xEEEEEE, true);
 				minecraft.fontRenderer.drawString(this.showing.getComposer(), this.posX + 15 + minecraft.fontRenderer.getStringWidth(StatCollector.translateToLocal("gui.mcplayer.music_composer") + ":"), this.posY + (this.width / 3) + 35, 0xEEEEEE, true);
-			}
+			*/}
 		}
 
 		public void setWidth(int width)

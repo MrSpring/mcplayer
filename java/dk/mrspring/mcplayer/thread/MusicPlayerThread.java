@@ -91,10 +91,11 @@ public class MusicPlayerThread extends Thread
 
     public synchronized void setVolume(double volume)
     {
-        if (this.volume != volume)
-            this.player.setVolume(volume);
-
-        this.volume = volume;
+        if (this.volume != volume && this.player != null)
+		{
+			this.player.setVolume(volume);
+        	this.volume = volume;
+		}
     }
 
     public synchronized Duration getMediaLength()

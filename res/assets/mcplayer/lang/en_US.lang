@@ -22,3 +22,4 @@ gui.mcplayer.music_composer=Composer(s)
 gui.mcplayer.details=Details
 gui.mcplayer.move_up=Move Up
 gui.mcplayer.move_down=Move Down
+gui.mcplayer.shuffle_music=Shuffle Music

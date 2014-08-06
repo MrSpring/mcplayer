@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 
+import java.util.Random;
+
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -30,7 +32,18 @@ public class GuiMusicList
 
 		this.width = width;
 		this.height = height;
+	}
 
+	public void shuffle()
+	{
+		for (int position = 1; position < LiteModMCPlayer.allFiles.size(); position++)
+		{
+			MusicFile file = LiteModMCPlayer.allFiles.remove(position);
+			int newPosition = new Random().nextInt(LiteModMCPlayer.allFiles.size() - 1) + 1;
+			LiteModMCPlayer.allFiles.add(newPosition, file);
+		}
+
+		LiteModMCPlayer.thread.updateQueue();
 	}
 
 	public void mouseWheel(int dWheel)

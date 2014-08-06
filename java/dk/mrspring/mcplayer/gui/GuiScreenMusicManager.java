@@ -23,6 +23,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	GuiFancyButton doneButton;
 	GuiFancyButton moveUpButton;
 	GuiFancyButton moveDownButton;
+	GuiFancyButton shuffleButton;
 	GuiMusicList list;
 	MusicDetails details;
 	GuiMusicScrubber scrubber;
@@ -40,6 +41,8 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.doneButton = new GuiFancyButton(5, this.height - 50 + 6, 50, 39, "gui.done");
 		this.moveUpButton = new GuiFancyButton(70, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_up").setDisabled();
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
+		this.shuffleButton = new GuiFancyButton(205, this.height - 50 + 6, 50, 39, "gui.mcplayer.shuffle_music");
+
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
 		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 39, true).enableControls();
@@ -94,6 +97,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.doneButton.drawButton(this.mc, mouseX, mouseY);
 		this.moveUpButton.drawButton(this.mc, mouseX, mouseY);
 		this.moveDownButton.drawButton(this.mc, mouseX, mouseY);
+		this.shuffleButton.drawButton(this.mc, mouseX, mouseY);
 		this.scrubber.draw(this.mc, mouseX, mouseY);
 	}
 
@@ -112,6 +116,8 @@ public class GuiScreenMusicManager extends GuiScreen
 			this.list.moveDown();
 		else if (this.moveDownButton.mousePressed(par1, par2, par3))
 			this.list.moveUp();
+		else if (this.shuffleButton.mousePressed(par1, par2, par3))
+			this.list.shuffle();
 
 		this.scrubber.mousePressed(par1, par2);
 	}

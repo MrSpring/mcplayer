@@ -8,8 +8,8 @@ import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.ConfigPanelMCPlayer;
 import dk.mrspring.mcplayer.gui.GuiScreenMusicManager;
-import dk.mrspring.mcplayer.gui.MCPlayerConfigPanel;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
@@ -167,6 +167,6 @@ public class LiteModMCPlayer implements Tickable, Configurable
     @Override
     public Class<? extends ConfigPanel> getConfigPanelClass()
     {
-        return MCPlayerConfigPanel.class;
+        return ConfigPanelMCPlayer.class;
     }
 }

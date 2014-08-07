@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by MrSpring on 26-07-14 for MC Music Player.
  */
-public class MCPlayerConfigPanel extends Gui implements ConfigPanel
+public class ConfigPanelMCPlayer extends Gui implements ConfigPanel
 {
     private GuiButton sizeToggler;
     private GuiPercentageModifier overlayTransparency;

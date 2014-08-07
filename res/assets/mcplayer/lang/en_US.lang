@@ -19,6 +19,11 @@ gui.mcplayer.music_genre=Genre
 gui.mcplayer.music_year=Release Year
 gui.mcplayer.music_composer=Composer(s)
 
+gui.mcplayer.schemes.high_contrast=Black and White (default)
+gui.mcplayer.schemes.red=Red
+gui.mcplayer.schemes.cyan=Cyan
+gui.mcplayer.schemes.inverted=Inverted (White and Black)
+
 gui.mcplayer.details=Details
 gui.mcplayer.move_up=Move Up
 gui.mcplayer.move_down=Move Down

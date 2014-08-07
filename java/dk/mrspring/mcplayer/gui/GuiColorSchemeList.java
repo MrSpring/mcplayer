@@ -25,7 +25,9 @@ public class GuiColorSchemeList extends Gui
 	{
 		this.schemes.add(ColorScheme.HIGH_CONTRAST);
 		this.schemes.add(ColorScheme.RED);
-		this.schemes.add(ColorScheme.NYAN);
+		this.schemes.add(ColorScheme.CYAN);
+		this.schemes.add(ColorScheme.GREEN);
+		this.schemes.add(ColorScheme.INVERTED);
 
 		this.selected = this.schemes.indexOf(LiteModMCPlayer.config.getColorScheme());
 
@@ -34,6 +36,11 @@ public class GuiColorSchemeList extends Gui
 
 		this.height = this.schemes.size() * this.perEntryHeight;
 		this.width = width;
+	}
+
+	public int getHeight()
+	{
+		return height;
 	}
 
 	public void draw(Minecraft minecraft)
@@ -58,10 +65,7 @@ public class GuiColorSchemeList extends Gui
 			int color = 0xBBBBBB;
 
 			if (i == this.selected)
-			{
 				color = 0xFFFFFF;
-				System.out.println(" I is selected, " + i);
-			}
 
 			minecraft.fontRenderer.drawString("gui.mcplayer.schemes." + scheme.name().toLowerCase(), this.posX + 4, this.posY + y + (this.perEntryHeight / 2) - 4, color, true);
 

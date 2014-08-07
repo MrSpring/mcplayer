@@ -36,7 +36,7 @@ public class ConfigPanelMCPlayer extends Gui implements ConfigPanel
     @Override
     public int getContentHeight()
     {
-        return 200;
+        return 210 + this.schemeList.getHeight();
     }
 
     @Override

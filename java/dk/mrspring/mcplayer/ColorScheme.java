@@ -8,8 +8,10 @@ import dk.mrspring.mcplayer.gui.Color;
 public enum ColorScheme
 {
 	HIGH_CONTRAST(Color.BLACK, Color.WHITE, Color.CYAN, .5F),
-	RED(Color.RED, Color.RED, Color.ORANGE, .25F),
-	NYAN(Color.CYAN, Color.BLUE, Color.GREEN, .25F);
+	RED(Color.RED, Color.LTRED, Color.ORANGE, .25F),
+	CYAN(Color.CYAN, Color.WHITE, Color.GREEN, .25F),
+	GREEN(Color.GREEN, Color.CYAN, Color.LTBLUE, .25F),
+	INVERTED(Color.WHITE, Color.BLACK, Color.PURPLE, .5F);
 
 	protected final Color baseColor, outlineColor, progressbarColor;
 	protected final float baseAlpha;

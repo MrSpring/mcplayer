@@ -193,8 +193,8 @@ public class GuiScreenMusicManager extends GuiScreen
 					textBasePosY = this.posY + 5 + 60;
 				} else
 				{
-					textBasePosX = this.posX + 5;
-					textBasePosY = this.posY + artWorkSize + 10;
+					textBasePosX = this.posX + 10;
+					textBasePosY = this.posY + artWorkSize + 15;
 				}
 
 				minecraft.fontRenderer.drawString(StatCollector.translateToLocal("gui.mcplayer.music_title") + ":", this.posX + artWorkSize + 15, this.posY + 20, 0xEEEEEE, true);

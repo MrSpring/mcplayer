@@ -25,6 +25,7 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
     private GuiTextField musicPath;
     private GuiButton reloadMusic;
     private GuiSlider volumeSlider;
+	private GuiColorSchemeList schemeList;
 
     @Override
     public String getPanelTitle()
@@ -48,6 +49,7 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
         this.musicPath.setText(LiteModMCPlayer.config.getMusicPath());
         this.reloadMusic = new GuiButton(0, 1, 141, StatCollector.translateToLocal("gui.mcplayer.reload_music"));
         this.volumeSlider = new GuiSlider(10, 171, StatCollector.translateToLocal("gui.mcplayer.volume"), LiteModMCPlayer.config.getVolume());
+		this.schemeList = new GuiColorSchemeList(1, 200, 100, 100);
     }
 
     @Override
@@ -91,6 +93,7 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
         this.musicPath.drawTextBox();
         this.reloadMusic.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
         this.volumeSlider.drawSlider(Minecraft.getMinecraft(), mouseX, mouseY);
+		this.schemeList.draw(Minecraft.getMinecraft());
 		LiteModMCPlayer.config.setVolume(this.volumeSlider.getValue());
     }
 
@@ -107,7 +110,8 @@ public class MCPlayerConfigPanel extends Gui implements ConfigPanel
         {
             LiteModMCPlayer.config.setMusicPath(this.musicPath.getText());
             LiteModMCPlayer.reloadMusic();
-		}
+		} else if (this.schemeList.mousePressed(mouseX, mouseY))
+			LiteModMCPlayer.config.setColorScheme(this.schemeList.getSelected().name());
 
 		this.volumeSlider.mousePressed(Minecraft.getMinecraft(), mouseX, mouseY);
         this.musicPath.mouseClicked(mouseX, mouseY, mouseButton);

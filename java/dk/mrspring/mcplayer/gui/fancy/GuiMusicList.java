@@ -120,7 +120,7 @@ public class GuiMusicList
 				DrawingHelper.drawRect(this.posX + 5F, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, this.perFileHeight - 5, scheme.getBaseColor(), alpha);
 
 				file.bindCover(minecraft);
-				glDrawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
+				DrawingHelper.drawTexturedRect(this.posX + 10, this.posY + 10 + y - this.scrollHeight, this.perFileHeight - 15, this.perFileHeight - 15, 0, 0, 512, 512, 1F);
 
 				FontRenderer renderer = minecraft.fontRenderer;
 
@@ -205,11 +205,11 @@ public class GuiMusicList
 		{
 			long systemTime = Minecraft.getSystemTime();
 			int listMouseY = (mouseY - 50) + this.scrollHeight;
+			this.isFocused = systemTime - this.timeOnFirstClick < 500 && this.selected != -1 && (mouseY - 50 + this.scrollHeight) / this.perFileHeight == this.selected;
 			this.setSelected(listMouseY / this.perFileHeight, false);
 			if (this.selected > LiteModMCPlayer.allFiles.size() - 1)
 				this.setSelected(-1, false);
 			System.out.println(" Time difference: " + (systemTime - this.timeOnFirstClick));
-			this.isFocused = systemTime - this.timeOnFirstClick < 500 && this.selected != -1;
 
 			this.timeOnFirstClick = systemTime;
 			return true;
@@ -242,26 +242,5 @@ public class GuiMusicList
 	public void setHeight(int height)
 	{
 		this.height = height;
-	}
-
-	private static void glDrawTexturedRect(int x, int y, int width, int height, int u, int v, int u2, int v2, float alpha)
-	{
-		glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
-		glAlphaFunc(GL_GREATER, 0.01F);
-		glEnable(GL_TEXTURE_2D);
-		glColor4f(1.0F, 1.0F, 1.0F, alpha);
-
-		float texMapScale = 0.001953125F;
-
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + 0,     y + height, 0, u  * texMapScale, v2 * texMapScale);
-		tessellator.addVertexWithUV(x + width, y + height, 0, u2 * texMapScale, v2 * texMapScale);
-		tessellator.addVertexWithUV(x + width, y + 0,      0, u2 * texMapScale, v  * texMapScale);
-		tessellator.addVertexWithUV(x + 0,     y + 0,      0, u  * texMapScale, v  * texMapScale);
-		tessellator.draw();
-
-		glDisable(GL_BLEND);
 	}
 }

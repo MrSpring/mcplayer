@@ -26,6 +26,12 @@ public class ModConfig
 		else return ColorScheme.HIGH_CONTRAST;
 	}
 
+	public void setColorScheme(String name)
+	{
+		if (ColorScheme.valueOf(name) != null)
+			this.color_scheme = name;
+	}
+
     public int getOverlayAlphaAsPercentage()
     {
         float temp = this.getOverlayAlpha() * 100;

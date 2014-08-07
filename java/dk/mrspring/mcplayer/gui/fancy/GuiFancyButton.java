@@ -56,7 +56,12 @@ public class GuiFancyButton extends Gui
 		if (isMouseHovering && this.isEnabled())
 			DrawingHelper.drawRect(this.posX + 2, this.posY + 2, this.width - 4F, this.height - 4F, Color.LTGREY, 0.75F);
 
-		this.drawCenteredString(minecraft.fontRenderer, this.getTitle(), this.posX + (this.width / 2), this.posY + ((this.height / 2) - 4), this.getTextColor(mouseX, mouseY), !isMouseHovering);
+		boolean drawShadow = true;
+
+		if (!this.isEnabled() || isMouseHovering)
+			drawShadow = false;
+
+		this.drawCenteredString(minecraft.fontRenderer, this.getTitle(), this.posX + (this.width / 2), this.posY + ((this.height / 2) - 4), this.getTextColor(mouseX, mouseY), drawShadow);
 	}
 
 	public void drawCenteredString(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5, boolean drawShadow)

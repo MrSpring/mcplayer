@@ -1,6 +1,5 @@
 package dk.mrspring.mcplayer.thread;
 
-import com.sun.istack.internal.NotNull;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
 import javafx.scene.media.Media;
@@ -18,12 +17,12 @@ public class MusicPlayerThread extends Thread
     protected MediaPlayer player;
     double volume;
 
-    public MusicPlayerThread(@NotNull MusicFile toPlay)
+    public MusicPlayerThread(final MusicFile toPlay)
     {
         this(toPlay, new Duration(0));
     }
 
-    public MusicPlayerThread(@NotNull MusicFile toPlay, @NotNull Duration from)
+    public MusicPlayerThread(final MusicFile toPlay, final Duration from)
     {
         this.playing = toPlay;
         this.playFrom = from;

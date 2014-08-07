@@ -1,6 +1,5 @@
 package dk.mrspring.mcplayer.file;
 
-import com.sun.istack.internal.NotNull;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -46,7 +45,7 @@ public class MusicFile
     protected BufferedImage cover;
     protected int textureId;
 
-    public MusicFile(@NotNull File file)
+    public MusicFile(final File file)
     {
         this.baseFile = file;
 

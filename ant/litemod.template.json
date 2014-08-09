@@ -1,0 +1,8 @@
+{
+    "name": "${ant.project.name}",
+    "mcversion": "${litemodversion}",
+    "revision": "${build.number}",
+    "author": "${author}",
+    "description": "The MC Player Mod allows you to play MP3 files from in-game!",
+    "url": "http://mcplayer.mrspring.dk/"
+}

@@ -71,6 +71,11 @@ public class MusicFile
         return this.cover;
     }
 
+	public boolean skip()
+	{
+		return false;
+	}
+
     public void initializeCover()
     {
         try

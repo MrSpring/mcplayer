@@ -39,6 +39,7 @@ public class LiteModMCPlayer implements Tickable, Configurable
 
     public static File coverLocation = new File("mcplayer/covers");
     public static File configFile;
+	public static File musicDataFile;
 
     public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
     public static List<String> supportedExtensions = new ArrayList<String>();

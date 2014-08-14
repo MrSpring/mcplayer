@@ -135,6 +135,12 @@ public class MusicManagerThread extends Thread
         if (this.player != null)
             this.stopCurrentPlayer();
 
+		if (file.skip())
+		{
+			this.playInQueue(1);
+			return;
+		}
+
         this.player = new MusicPlayerThread(file, startPosition);
         this.player.start();
         this.state = PLAYING;

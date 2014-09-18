@@ -111,9 +111,6 @@ public class LiteModMCPlayer implements Tickable, Configurable
 			}
 		}
 
-		System.loadLibrary("jaudiotagger.jar");
-		System.loadLibrary("jfrt.jar");
-
         final CountDownLatch latch = new CountDownLatch(1);
         SwingUtilities.invokeLater(new Runnable()
         {

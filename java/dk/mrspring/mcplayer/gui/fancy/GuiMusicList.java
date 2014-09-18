@@ -22,7 +22,7 @@ public class GuiMusicList
 	int width, height;
 	int scrollHeight = 0;
 	int scrollbarWidth = 5;
-	int perFileHeight = 80;
+	int perFileHeight = 75;
 	int selected = -1;
 	boolean isFocused = false;
 	long timeOnFirstClick = -1;
@@ -112,8 +112,20 @@ public class GuiMusicList
 			for (int i = 0; i < LiteModMCPlayer.allFiles.size(); i++)
 			{
 				// TODO Only Render if inside view, for better performance
+				// TODO Rewrite rendering, possibly move to seperate class for easier rendering elsewhere
 
-				MusicFile file = LiteModMCPlayer.allFiles.get(i);
+				int xTemp = this.posX + 4;
+				int yTemp = this.posY + (i * this.perFileHeight) - this.scrollHeight + 4;
+
+				if (yTemp < this.posY + this.height + 50 && yTemp > this.posY - 50 - this.perFileHeight)
+				{
+					MusicFile file = LiteModMCPlayer.allFiles.get(i);
+
+					GuiMusicFile guiMusicFile = new GuiMusicFile(file, xTemp, yTemp, this.width - 18, this.perFileHeight + 100);
+					guiMusicFile.draw(minecraft, i == this.selected);
+				}
+
+				/*MusicFile file = LiteModMCPlayer.allFiles.get(i);
 				float alpha = scheme.getBaseAlpha();
 				if (i == this.selected)
 					alpha += .25F;
@@ -155,7 +167,7 @@ public class GuiMusicList
 				renderer.drawString(file.getArtist(),this.perFileHeight, 35 + this.posY + y - this.scrollHeight, 0xBBBBBB, true);
 */
 
-				if (i == this.selected)
+				/*if (i == this.selected)
 				{
 					DrawingHelper.drawRect(this.posX + 5, this.posY + 5 + y - this.scrollHeight, this.width - 15 - this.scrollbarWidth, 1, scheme.getOutlineColor(), 1F);
 					DrawingHelper.drawRect(this.posX + 5, this.posY + y - this.scrollHeight + this.perFileHeight - 1, this.width - 15 - this.scrollbarWidth, 1, scheme.getOutlineColor(), 1F);
@@ -164,7 +176,7 @@ public class GuiMusicList
 					DrawingHelper.drawRect(this.posX + 5 + this.width - 15 - this.scrollbarWidth - 1, this.posY + 5 + y - this.scrollHeight, 1, this.perFileHeight - 5, scheme.getOutlineColor(), 1F);
 				}
 				y += this.perFileHeight;
-			}
+			*/}
 
 			//if (this.canScrollbarScroll(1))
 			//	this.scrollHeight++;

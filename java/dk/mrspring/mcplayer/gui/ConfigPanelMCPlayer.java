@@ -78,7 +78,7 @@ public class ConfigPanelMCPlayer extends Gui implements ConfigPanel
     @Override
     public void onTick(ConfigPanelHost host)
     {
-
+		LiteModMCPlayer.config.setVolume(this.volumeSlider.getValue());
     }
 
     @Override
@@ -94,7 +94,6 @@ public class ConfigPanelMCPlayer extends Gui implements ConfigPanel
         this.reloadMusic.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
         this.volumeSlider.drawSlider(Minecraft.getMinecraft(), mouseX, mouseY);
 		this.schemeList.draw(Minecraft.getMinecraft());
-		LiteModMCPlayer.config.setVolume(this.volumeSlider.getValue());
     }
 
     @Override

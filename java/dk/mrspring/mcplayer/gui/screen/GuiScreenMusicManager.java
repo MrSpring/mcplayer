@@ -1,8 +1,9 @@
-package dk.mrspring.mcplayer.gui;
+package dk.mrspring.mcplayer.gui.screen;
 
 import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.gui.DrawingHelper;
 import dk.mrspring.mcplayer.gui.fancy.GuiFancyButton;
 import dk.mrspring.mcplayer.gui.fancy.GuiMusicList;
 import dk.mrspring.mcplayer.gui.fancy.GuiMusicScrubber;
@@ -12,6 +13,10 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.ReadableColor;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 /**
  * Created by MrSpring on 27-07-14 for MC Music Player.
@@ -24,6 +29,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	GuiFancyButton moveUpButton;
 	GuiFancyButton moveDownButton;
 	GuiFancyButton shuffleButton;
+    GuiFancyButton copyTitle;
 
 	GuiMusicList list;
 	MusicDetails details;
@@ -44,10 +50,12 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.moveUpButton = new GuiFancyButton(70, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_up").setDisabled();
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
 		this.shuffleButton = new GuiFancyButton(210, this.height - 50 + 6, 80, 39, "gui.mcplayer.shuffle_music");
+        this.copyTitle = new GuiFancyButton(300, this.height - 50 + 6, 80, 39, "Copy Song Title");
 
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
 		this.scrubber = new GuiMusicScrubber(5, 5, this.width - 10, 39, true).enableControls();
+
 	}
 
 	@Override
@@ -59,8 +67,7 @@ public class GuiScreenMusicManager extends GuiScreen
 
 		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, scheme.getBaseColor(), scheme.getBaseAlpha());
 
-		if (this.detailWidth > 0)
-			this.details.draw(this.mc);
+
 
 		if (this.list.getFocused() != null)
 			this.detailWidth += 10;
@@ -81,9 +88,12 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.list.setWidth(this.width - this.detailWidth);
 		this.details.setWidth(this.detailWidth);
 		this.details.setPosX(this.width - this.detailWidth);
+        this.details.setShowing(this.list.getFocused());
 		this.list.draw(this.mc, mouseX, mouseY);
-		this.details.draw(this.mc);
-		this.details.setShowing(this.list.getFocused());
+        if (this.detailWidth > 0)
+            this.details.draw(this.mc);
+		//this.details.draw(this.mc);
+
 
 
 		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, scheme.getBaseColor(), scheme.getBaseAlpha());
@@ -107,12 +117,14 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.moveDownButton.drawButton(this.mc, mouseX, mouseY);
 		this.shuffleButton.drawButton(this.mc, mouseX, mouseY);
 		this.scrubber.draw(this.mc, mouseX, mouseY);
+        this.copyTitle.drawButton(this.mc, mouseX, mouseY);
 	}
 
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
 		super.mouseClicked(par1, par2, par3);
+
 		if (par1 < this.width - this.detailWidth)
 			this.list.mouseClicked(par1, par2);
 		else
@@ -126,9 +138,25 @@ public class GuiScreenMusicManager extends GuiScreen
 			this.list.moveUp();
 		else if (this.shuffleButton.mousePressed(par1, par2, par3))
 			this.list.shuffle();
+        else if (this.copyTitle.mousePressed(par1, par2, par3))
+            this.copySontTitle();
 
 		this.scrubber.mousePressed(par1, par2);
 	}
+
+    protected void copySontTitle()
+    {
+        MusicFile file = this.list.getSelectedFile();
+
+        if (file != null)
+        {
+            String toCopy = file.getTitle();
+
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection selection = new StringSelection(toCopy);
+            clipboard.setContents(selection, selection);
+        }
+    }
 
 	@Override
 	protected void keyTyped(char par1, int par2)
@@ -143,6 +171,8 @@ public class GuiScreenMusicManager extends GuiScreen
 			LiteModMCPlayer.thread.scheduleNext();
 		else if (par2 == LiteModMCPlayer.playPrev.getKeyCode())
 			LiteModMCPlayer.thread.schedulePrev();
+        else if (par2 == Keyboard.KEY_C && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+            this.copySontTitle();
 		else super.keyTyped(par1, par2);
 	}
 
@@ -160,6 +190,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		int posX, posY;
 		int width, height;
 		MusicFile showing;
+        GuiFancyButton copyTitle;
 
 		public MusicDetails(int x, int y, int width, int height)
 		{
@@ -245,5 +276,10 @@ public class GuiScreenMusicManager extends GuiScreen
 		{
 			this.showing = showing;
 		}
-	}
+
+        public MusicFile getShowing()
+        {
+            return showing;
+        }
+    }
 }

@@ -9,7 +9,7 @@ import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.ConfigPanelMCPlayer;
-import dk.mrspring.mcplayer.gui.GuiScreenMusicManager;
+import dk.mrspring.mcplayer.gui.screen.GuiScreenMusicManager;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
@@ -19,9 +19,6 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,12 +51,12 @@ public class LiteModMCPlayer implements Tickable, Configurable
     @Override
     public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
     {
-		String toCopy = "This is now copied";
-		minecraft.fontRenderer.drawString(" Copied \"" + toCopy + "\" to your clipboard.", 10, 10, 0xFFFFFF);
+		/*String toCopy = "This is now copied";
+		minecraft.fontRenderer.drawString(" Copied \"" + toCopy + "\" to your clipboard.", 10, 10, 0xFFFFFF);*/
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		/*Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		StringSelection selection = new StringSelection(toCopy);
-		clipboard.setContents(selection, selection);
+		clipboard.setContents(selection, selection);*/
 
         if (sizeToggler.isPressed())
             config.toggleOverlaySize();

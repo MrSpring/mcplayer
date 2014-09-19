@@ -121,7 +121,7 @@ public class GuiMusicList
 				{
 					MusicFile file = LiteModMCPlayer.allFiles.get(i);
 
-					GuiMusicFile guiMusicFile = new GuiMusicFile(file, xTemp, yTemp, this.width - 18, this.perFileHeight + 100);
+					GuiMusicFile guiMusicFile = new GuiMusicFile(file, xTemp, yTemp, this.width - 18, this.perFileHeight - 2);
 					guiMusicFile.draw(minecraft, i == this.selected);
 				}
 
@@ -203,6 +203,13 @@ public class GuiMusicList
 	{
 		return selected;
 	}
+
+    public MusicFile getSelectedFile()
+    {
+        if (this.getSelected() != -1)
+            return LiteModMCPlayer.allFiles.get(this.getSelected());
+        else return null;
+    }
 
 	public MusicFile getFocused()
 	{

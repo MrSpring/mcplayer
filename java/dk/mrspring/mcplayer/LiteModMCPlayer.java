@@ -19,8 +19,12 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -37,6 +41,8 @@ public class LiteModMCPlayer implements Tickable, Configurable
 	public static KeyBinding openGui = new KeyBinding("key.mcplayer.open_gui", Keyboard.KEY_G, "key.categories.litemods");
 	public static KeyBinding openWelcomeScreen = new KeyBinding("key.mcplayer.open_welcome_screen", Keyboard.KEY_R, "key.categories.litemods");
 
+	public static HashMap<String, MusicFile> musicFileHashMap = new HashMap<String, MusicFile>();
+
     public static File coverLocation = new File("mcplayer/covers");
     public static File configFile;
 	public static File musicDataFile;
@@ -48,6 +54,13 @@ public class LiteModMCPlayer implements Tickable, Configurable
     @Override
     public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean clock)
     {
+		String toCopy = "This is now copied";
+		minecraft.fontRenderer.drawString(" Copied \"" + toCopy + "\" to your clipboard.", 10, 10, 0xFFFFFF);
+
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection selection = new StringSelection(toCopy);
+		clipboard.setContents(selection, selection);
+
         if (sizeToggler.isPressed())
             config.toggleOverlaySize();
         if (pausePlay.isPressed())

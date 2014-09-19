@@ -14,6 +14,8 @@ public class DrawingHelper
 {
 	public static void drawRect(float x, float y, float width, float height, Color colour, float alpha)
 	{
+
+
 		glEnable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_CULL_FACE);

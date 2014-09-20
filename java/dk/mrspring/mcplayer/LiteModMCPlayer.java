@@ -9,6 +9,7 @@ import com.mumfrey.liteloader.modconfig.ConfigPanel;
 import dk.mrspring.mcplayer.file.FileLoader;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.ConfigPanelMCPlayer;
+import dk.mrspring.mcplayer.gui.screen.GuiScreenAllMusic;
 import dk.mrspring.mcplayer.gui.screen.GuiScreenMusicManager;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
 import dk.mrspring.mcplayer.list.Playlist;
@@ -67,11 +68,11 @@ public class LiteModMCPlayer implements Tickable, Configurable
         if (playPrev.isPressed())
             thread.schedulePrev();
         if (openGui.isPressed())
-            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenMusicManager(minecraft.currentScreen));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAllMusic()/*GuiScreenMusicManager(minecraft.currentScreen)*/);
 
         thread.setVolume(config.getVolume());
 
-		if (!(minecraft.currentScreen instanceof GuiScreenMusicManager))
+		if (!(minecraft.currentScreen instanceof GuiScreenAllMusic))
         	PlayerOverlay.render(!config.getOverlaySize(), minecraft, thread);
 	}
 

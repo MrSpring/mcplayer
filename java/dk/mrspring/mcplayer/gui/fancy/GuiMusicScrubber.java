@@ -2,6 +2,7 @@ package dk.mrspring.mcplayer.gui.fancy;
 
 import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.Color;
 import dk.mrspring.mcplayer.gui.DrawingHelper;
 import javafx.util.Duration;
@@ -170,7 +171,8 @@ public class GuiMusicScrubber extends Gui
 
 		if (this.showTitle)
 		{
-			String title = LiteModMCPlayer.thread.getCurrentlyPlaying().getTitle(), artist = LiteModMCPlayer.thread.getCurrentlyPlaying().getArtist();
+			MusicFile currentlyPlaying = LiteModMCPlayer.data.get(LiteModMCPlayer.thread.getCurrentlyPlaying());
+			String title = currentlyPlaying.getTitle(), artist = currentlyPlaying.getArtist();
 
 			minecraft.fontRenderer.drawString(title, this.posX + 10, this.posY + 10, 0xFFFFFF, true);
 			minecraft.fontRenderer.drawString(" by " + artist, this.posX + 10 + minecraft.fontRenderer.getStringWidth(title), this.posY + 10, 0xBBBBBB, true);

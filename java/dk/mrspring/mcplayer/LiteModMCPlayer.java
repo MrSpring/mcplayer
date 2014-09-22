@@ -6,13 +6,11 @@ import com.mumfrey.liteloader.Configurable;
 import com.mumfrey.liteloader.Tickable;
 import com.mumfrey.liteloader.core.LiteLoader;
 import com.mumfrey.liteloader.modconfig.ConfigPanel;
-import dk.mrspring.mcplayer.file.FileLoader;
-import dk.mrspring.mcplayer.file.MusicFile;
+import dk.mrspring.mcplayer.data.Data;
 import dk.mrspring.mcplayer.gui.ConfigPanelMCPlayer;
-import dk.mrspring.mcplayer.gui.screen.GuiScreenAllMusic;
-import dk.mrspring.mcplayer.gui.screen.GuiScreenMusicManager;
 import dk.mrspring.mcplayer.gui.PlayerOverlay;
-import dk.mrspring.mcplayer.list.Playlist;
+import dk.mrspring.mcplayer.gui.screen.GuiScreenAllMusic;
+import dk.mrspring.mcplayer.gui.screen.GuiScreenQueueManager;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import javafx.embed.swing.JFXPanel;
 import net.minecraft.client.Minecraft;
@@ -21,9 +19,6 @@ import org.lwjgl.input.Keyboard;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -39,14 +34,14 @@ public class LiteModMCPlayer implements Tickable, Configurable
 	public static KeyBinding openGui = new KeyBinding("key.mcplayer.open_gui", Keyboard.KEY_G, "key.categories.litemods");
 	public static KeyBinding openWelcomeScreen = new KeyBinding("key.mcplayer.open_welcome_screen", Keyboard.KEY_R, "key.categories.litemods");
 
-	public static HashMap<String, MusicFile> musicFileHashMap = new HashMap<String, MusicFile>();
+	//public static HashMap<String, MusicFile> musicFileHashMap = new HashMap<String, MusicFile>();
 
     public static File coverLocation = new File("mcplayer/covers");
     public static File configFile;
-	public static File musicDataFile;
+	//public static File musicDataFile;
 
-    public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
-    public static List<String> supportedExtensions = new ArrayList<String>();
+    //public static Playlist<MusicFile> allFiles = new Playlist<MusicFile>("ALL_FILES");
+	public static Data data;
     public static MusicManagerThread thread;
 
     @Override
@@ -68,7 +63,7 @@ public class LiteModMCPlayer implements Tickable, Configurable
         if (playPrev.isPressed())
             thread.schedulePrev();
         if (openGui.isPressed())
-            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAllMusic()/*GuiScreenMusicManager(minecraft.currentScreen)*/);
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenQueueManager(minecraft.currentScreen));
 
         thread.setVolume(config.getVolume());
 
@@ -149,12 +144,21 @@ public class LiteModMCPlayer implements Tickable, Configurable
 
         coverLocation.mkdirs();
 
-        supportedExtensions.add(".mp3");
-
-        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+        //FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+		File file = new File("mcplayer");
+		file.mkdirs();
+		data = new Data(config.getMusicPath(), file);
+		data.addExtension(".mp3");
+		try
+		{
+			data.load();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
         System.out.println(" Music Path: " + config.music_path);
 
-        thread = new MusicManagerThread(allFiles);
+        thread = new MusicManagerThread(data.createDefaultQueue());
         thread.start();
     }
 
@@ -166,13 +170,21 @@ public class LiteModMCPlayer implements Tickable, Configurable
 
     public static void reloadMusic()
     {
-        allFiles = new Playlist<MusicFile>("ALL_FILES");
-        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
+		try
+		{
+			data.load();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+//        allFiles = new Playlist<MusicFile>("ALL_FILES");
+//        FileLoader.addFiles(config.getMusicPath(), supportedExtensions, allFiles);
 
         if (thread.running)
             thread.stopMusic();
 
-        thread = new MusicManagerThread(allFiles);
+        thread = new MusicManagerThread(data.createDefaultQueue());
         thread.start();
     }
 

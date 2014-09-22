@@ -1,13 +1,16 @@
 package dk.mrspring.mcplayer.list;
 
+import dk.mrspring.mcplayer.LiteModMCPlayer;
+import dk.mrspring.mcplayer.file.MusicFile;
+
 import java.util.*;
 
 /**
  * Created by Konrad on 16-07-2014 for MC Music Player.
  */
-public class Playlist<MusicFile> implements List<MusicFile>
+public class Playlist implements List<String>
 {
-    protected List files = new ArrayList<MusicFile>();
+    protected List files = new ArrayList<String>();
     protected String name = "UNNAMED";
 
     public Playlist(String name)
@@ -35,7 +38,7 @@ public class Playlist<MusicFile> implements List<MusicFile>
     }
 
     @Override
-    public Iterator<MusicFile> iterator()
+    public Iterator<String> iterator()
     {
         return this.files.iterator();
     }
@@ -53,7 +56,7 @@ public class Playlist<MusicFile> implements List<MusicFile>
     }
 
     @Override
-    public boolean add(MusicFile musicFile)
+    public boolean add(String musicFile)
     {
         return this.files.add(musicFile);
     }
@@ -71,13 +74,13 @@ public class Playlist<MusicFile> implements List<MusicFile>
     }
 
     @Override
-    public boolean addAll(Collection<? extends MusicFile> c)
+    public boolean addAll(Collection<? extends String> c)
     {
         return this.files.addAll(c);
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends MusicFile> c)
+    public boolean addAll(int index, Collection<? extends String> c)
     {
         return this.files.addAll(index, c);
     }
@@ -101,27 +104,32 @@ public class Playlist<MusicFile> implements List<MusicFile>
     }
 
     @Override
-    public MusicFile get(int index)
+    public String get(int index)
     {
-        return (MusicFile) this.files.get(index);
+        return (String) this.files.get(index);
+    }
+
+	public MusicFile getFile(int index)
+	{
+		return LiteModMCPlayer.data.get(this.get(index));
+	}
+
+    @Override
+    public String set(int index, String element)
+    {
+        return (String) this.files.set(index, element);
     }
 
     @Override
-    public MusicFile set(int index, MusicFile element)
-    {
-        return (MusicFile) this.files.set(index, element);
-    }
-
-    @Override
-    public void add(int index, MusicFile element)
+    public void add(int index, String element)
     {
         this.files.add(index, element);
     }
 
     @Override
-    public MusicFile remove(int index)
+    public String remove(int index)
     {
-        return (MusicFile) this.files.remove(index);
+        return (String) this.files.remove(index);
     }
 
     @Override
@@ -137,19 +145,19 @@ public class Playlist<MusicFile> implements List<MusicFile>
     }
 
     @Override
-    public ListIterator<MusicFile> listIterator()
+    public ListIterator<String> listIterator()
     {
         return this.files.listIterator();
     }
 
     @Override
-    public ListIterator<MusicFile> listIterator(int index)
+    public ListIterator<String> listIterator(int index)
     {
         return this.files.listIterator(index);
     }
 
     @Override
-    public List<MusicFile> subList(int fromIndex, int toIndex)
+    public List<String> subList(int fromIndex, int toIndex)
     {
         return this.files.subList(fromIndex, toIndex);
     }

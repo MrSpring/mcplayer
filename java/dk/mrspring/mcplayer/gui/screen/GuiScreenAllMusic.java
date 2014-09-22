@@ -16,7 +16,7 @@ public class GuiScreenAllMusic extends GuiScreen
 	@Override
 	public void initGui()
 	{
-		this.musicFile = new GuiMusicFile(LiteModMCPlayer.thread.getCurrentlyPlaying(), 5, 5, 100, 20);
+		this.musicFile = new GuiMusicFile(LiteModMCPlayer.data.get(LiteModMCPlayer.thread.getCurrentlyPlaying()), 5, 5, 100, 20);
 		this.musicFile.setDisplayType(GuiMusicFile.DisplayType.VERTICAL);
 	}
 

@@ -5,12 +5,14 @@ import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.list.Playlist;
 import javafx.util.Duration;
 
+import java.util.Collection;
+
 /**
  * Created by Konrad on 02-07-2014 for MC Music Player.
  */
 public class MusicManagerThread extends Thread
 {
-    protected Playlist<MusicFile> queue;
+    public Playlist queue;
 
     public static final int NOT_INITIALIZED = -1;
     public static final int NOT_PLAYING = 0;
@@ -24,16 +26,18 @@ public class MusicManagerThread extends Thread
     public int state = NOT_INITIALIZED;
     public double volume = 1.0;
 
-    public MusicFile currentlyPlaying;
-    public MusicFile nextInQueue;
+    public String currentlyPlaying;
+    public String nextInQueue;
 
     public boolean running = true;
     public MusicPlayerThread player;
 
-    public MusicManagerThread(Playlist<MusicFile> filesToPlay)
+    public MusicManagerThread(Playlist filesToPlay)
     {
         this.queue = filesToPlay;
-    }
+		System.out.println("Initializing from queue with size: " + this.queue.size());
+		this.setName("MCPlayer_MusicManager");
+	}
 
     @Override
     public void run()
@@ -70,12 +74,17 @@ public class MusicManagerThread extends Thread
         this.state = NOT_PLAYING;
     }
 
-	public synchronized void updateQueue()
+	public synchronized void updateQueue(Playlist queue)
 	{
-		this.queue = LiteModMCPlayer.allFiles;
+		this.queue = queue;
 
-		if (this.player.getPlaying() != this.queue.get(0))
+		if (!this.player.getPlaying().getTitleFromFieldKey().equals(this.queue.get(0)))
 			this.playInQueue(0);
+	}
+
+	public Playlist getQueue()
+	{
+		return queue;
 	}
 
 	public synchronized void resumeFrom(Duration from)
@@ -110,14 +119,14 @@ public class MusicManagerThread extends Thread
         {
             for (int i = 0; i < toSkip; i++)
             {
-                MusicFile file = this.queue.remove(0);
+                String file = this.queue.remove(0);
                 this.queue.add(file);
             }
         } else
         {
             for (int i = 0; i > toSkip; i--)
             {
-                MusicFile file = this.queue.remove(this.queue.size() - 1);
+                String file = this.queue.remove(this.queue.size() - 1);
                 this.queue.add(0, file);
             }
         }
@@ -125,23 +134,25 @@ public class MusicManagerThread extends Thread
         this.play(this.queue.get(0), startPosition);
     }
 
-    private synchronized void play(MusicFile file)
+    private synchronized void play(String file)
     {
         this.play(file, Duration.ZERO);
     }
 
-    private synchronized void play(MusicFile file, Duration startPosition)
+    private synchronized void play(String file, Duration startPosition)
     {
         if (this.player != null)
             this.stopCurrentPlayer();
 
-		if (file.skip())
+		MusicFile fileToPlay = LiteModMCPlayer.data.get(file);
+
+		if (fileToPlay.skip())
 		{
 			this.playInQueue(1);
 			return;
 		}
 
-        this.player = new MusicPlayerThread(file, startPosition);
+        this.player = new MusicPlayerThread(fileToPlay, startPosition);
         this.player.start();
         this.state = PLAYING;
     }
@@ -224,12 +235,12 @@ public class MusicManagerThread extends Thread
 
     // CLIENT RENDERING STUFFZ!
 
-    public MusicFile getCurrentlyPlaying()
+    public String getCurrentlyPlaying()
     {
         return this.currentlyPlaying;
     }
 
-    public MusicFile getNextInQueue()
+    public String getNextInQueue()
     {
         return this.nextInQueue;
     }
@@ -562,7 +573,7 @@ public class MusicManagerThread extends Thread
             {
                 musicFile = this.queue.remove(this.queue.size() - 1);
                 this.queue.add(0, musicFile);
-                //this.queue.set(0, musicFile);
+                //this.queue.put(0, musicFile);
                 currentlyPlayingIndex--;
             }
         }

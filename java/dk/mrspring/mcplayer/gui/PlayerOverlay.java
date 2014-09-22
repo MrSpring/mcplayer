@@ -2,6 +2,7 @@ package dk.mrspring.mcplayer.gui;
 
 import dk.mrspring.mcplayer.ColorScheme;
 import dk.mrspring.mcplayer.LiteModMCPlayer;
+import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.thread.MusicManagerThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -28,9 +29,11 @@ public class PlayerOverlay
     {
 		ColorScheme scheme = LiteModMCPlayer.config.getColorScheme();
 
-		String song = thread.getCurrentlyPlaying().getTitle();
-		String album = thread.getCurrentlyPlaying().getAlbum();
-		String artist = thread.getCurrentlyPlaying().getArtist();
+		MusicFile currentlyPlaying = LiteModMCPlayer.data.get(thread.getCurrentlyPlaying());
+
+		String song = currentlyPlaying.getTitle();
+		String album = currentlyPlaying.getAlbum();
+		String artist = currentlyPlaying.getArtist();
 
         int songWidth = minecraft.fontRenderer.getStringWidth(song);
         int albumWidth = minecraft.fontRenderer.getStringWidth(album);
@@ -60,7 +63,7 @@ public class PlayerOverlay
 
 
         // minecraft.getTextureManager().bindTexture(file.getCoverLocation());
-		thread.getCurrentlyPlaying().bindCover(minecraft);
+		currentlyPlaying.bindCover(minecraft);
 
         DrawingHelper.drawTexturedRect(5, 5, 80, 80, 0, 0, 512, 512, 1F);
 
@@ -76,8 +79,10 @@ public class PlayerOverlay
 			float progressBerHeight = 2.5F;
 			DrawingHelper.drawRect(5F, 5F + (height - progressBerHeight), (float) (width * progressThroughSong), progressBerHeight, scheme.getProgressbarColor(), 1F);
 
-			String nextTitle = thread.getNextInQueue().getTitle();
-			String nextArtist = thread.getNextInQueue().getArtist();
+			MusicFile nextUp = LiteModMCPlayer.data.get(thread.getNextInQueue());
+
+			String nextTitle = nextUp.getTitle();
+			String nextArtist = nextUp.getArtist();
 
 			int nextUpWidth = minecraft.fontRenderer.getStringWidth(nextTitle + " by " + nextArtist);
 

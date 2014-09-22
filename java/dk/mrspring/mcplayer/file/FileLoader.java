@@ -3,6 +3,7 @@ package dk.mrspring.mcplayer.file;
 import dk.mrspring.mcplayer.list.Playlist;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,12 +11,14 @@ import java.util.List;
  */
 public class FileLoader
 {
-    public static void addFiles(String path, List<String> extensions, Playlist fileList)
+    public static void addFiles(String path, List<String> extensions, List<MusicFile> fileList)
     {
         try
         {
-            File directory = new File(path);
-            String[] directoryContents = directory.list();
+			File directory = new File(path);
+			System.out.println("Loading files from: " + directory.toURI().toASCIIString());
+			System.out.println("Directory list size: " + directory.list().length);
+			String[] directoryContents = directory.list();
 
             for (String fileName : directoryContents)
             {

@@ -31,10 +31,10 @@
     <!-- The name of the eclipse project to build, for upstream dependencies see the targets below -->
     <property name="project"        value="mcplayer" />
 
-    <!-- The upstream MD5 set to use when outputting your mod classes, usually liteloader -->
+    <!-- The upstream MD5 put to use when outputting your mod classes, usually liteloader -->
     <property name="md5set"         value="liteloader" />
 
-    <!-- The MD5 set to *write* for downstream projects to use, uncomment this line to enable -->
+    <!-- The MD5 put to *write* for downstream projects to use, uncomment this line to enable -->
     <!-- <property name="outmd5set" value="${ant.project.name}" /> -->
 
     <!-- The base MCP directory, normally 3 levels up from here but change if the build script is moved -->
@@ -69,7 +69,7 @@
         <antcall target="recompile" />
 
         <!-- Calls the MCP reobfuscate process, this will output all modified classes not masked -->
-        <!-- by the upstream MD5 set, which should be our mod classes!                           -->
+        <!-- by the upstream MD5 put, which should be our mod classes!                           -->
         <antcall target="reobfuscate" />
 
         <!-- Saves the new MD5's to our own file, for use by downstream projects. If enabled.    -->

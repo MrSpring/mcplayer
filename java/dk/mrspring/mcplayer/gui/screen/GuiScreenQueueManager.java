@@ -10,18 +10,19 @@ import dk.mrspring.mcplayer.gui.fancy.GuiMusicScrubber;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.input.*;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.util.ReadableColor;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
 
 /**
  * Created by MrSpring on 27-07-14 for MC Music Player.
  */
-public class GuiScreenMusicManager extends GuiScreen
+public class GuiScreenQueueManager extends GuiScreen
 {
 	private final GuiScreen onExit;
 
@@ -30,6 +31,7 @@ public class GuiScreenMusicManager extends GuiScreen
 	GuiFancyButton moveDownButton;
 	GuiFancyButton shuffleButton;
     GuiFancyButton copyTitle;
+	GuiFancyButton reloadNames;
 
 	GuiMusicList list;
 	MusicDetails details;
@@ -37,7 +39,7 @@ public class GuiScreenMusicManager extends GuiScreen
 
 	int detailWidth = 0;
 
-	public GuiScreenMusicManager(GuiScreen previousScreen)
+	public GuiScreenQueueManager(GuiScreen previousScreen)
 	{
 		this.onExit = previousScreen;
 	}
@@ -51,6 +53,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
 		this.shuffleButton = new GuiFancyButton(210, this.height - 50 + 6, 80, 39, "gui.mcplayer.shuffle_music");
         this.copyTitle = new GuiFancyButton(300, this.height - 50 + 6, 80, 39, "Copy Song Title");
+		this.reloadNames = new GuiFancyButton(370, this.height - 50 + 6, 80, 36, "Reload Titles");
 
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
 		this.details = new MusicDetails(this.width - detailWidth, 50, this.detailWidth, this.height - 100);
@@ -88,7 +91,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.list.setWidth(this.width - this.detailWidth);
 		this.details.setWidth(this.detailWidth);
 		this.details.setPosX(this.width - this.detailWidth);
-        this.details.setShowing(this.list.getFocused());
+        this.details.setShowing(LiteModMCPlayer.data.get(this.list.getFocused()));
 		this.list.draw(this.mc, mouseX, mouseY);
         if (this.detailWidth > 0)
             this.details.draw(this.mc);
@@ -118,6 +121,7 @@ public class GuiScreenMusicManager extends GuiScreen
 		this.shuffleButton.drawButton(this.mc, mouseX, mouseY);
 		this.scrubber.draw(this.mc, mouseX, mouseY);
         this.copyTitle.drawButton(this.mc, mouseX, mouseY);
+		this.reloadNames.drawButton(this.mc, mouseX, mouseY);
 	}
 
 	@Override
@@ -140,13 +144,31 @@ public class GuiScreenMusicManager extends GuiScreen
 			this.list.shuffle();
         else if (this.copyTitle.mousePressed(par1, par2, par3))
             this.copySontTitle();
+		else if (this.reloadNames.mousePressed(par1, par2, par3))
+		{
+			try
+			{
+				LiteModMCPlayer.data.saveChangedNames();
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		this.scrubber.mousePressed(par1, par2);
 	}
 
     protected void copySontTitle()
     {
-        MusicFile file = this.list.getSelectedFile();
+		MusicFile file = LiteModMCPlayer.data.get(this.list.getSelectedFile());
+
+		if (file != null)
+		{
+			file.setCustomTitle("Another song");
+			LiteModMCPlayer.data.updateSong(file);
+		}
+
+        /*MusicFile file = this.list.getSelectedFile();
 
         if (file != null)
         {
@@ -155,7 +177,7 @@ public class GuiScreenMusicManager extends GuiScreen
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection selection = new StringSelection(toCopy);
             clipboard.setContents(selection, selection);
-        }
+        }*/
     }
 
 	@Override

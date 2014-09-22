@@ -5,6 +5,7 @@ import dk.mrspring.mcplayer.LiteModMCPlayer;
 import dk.mrspring.mcplayer.file.MusicFile;
 import dk.mrspring.mcplayer.gui.Color;
 import dk.mrspring.mcplayer.gui.DrawingHelper;
+import dk.mrspring.mcplayer.list.Playlist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -38,14 +39,14 @@ public class GuiMusicList
 
 	public void shuffle()
 	{
-		for (int position = 1; position < LiteModMCPlayer.allFiles.size(); position++)
+		Playlist queue = LiteModMCPlayer.thread.queue;
+		for (int position = 1; position < LiteModMCPlayer.thread.getQueue().size(); position++)
 		{
-			MusicFile file = LiteModMCPlayer.allFiles.remove(position);
-			int newPosition = new Random().nextInt(LiteModMCPlayer.allFiles.size() - 1) + 1;
-			LiteModMCPlayer.allFiles.add(newPosition, file);
+			String file = queue.remove(position);
+			int newPosition = new Random().nextInt(queue.size() - 1) + 1;
+			queue.add(newPosition, file);
 		}
-
-		LiteModMCPlayer.thread.updateQueue();
+		LiteModMCPlayer.thread.updateQueue(queue);
 	}
 
 	public void mouseWheel(int dWheel)
@@ -55,29 +56,30 @@ public class GuiMusicList
 
 		if (height < 0)
 			height = 0;
-		else if (height > ((LiteModMCPlayer.allFiles.size() - 1) * this.perFileHeight))
-			height = ((LiteModMCPlayer.allFiles.size() - 1) * this.perFileHeight);
+		else if (height > ((LiteModMCPlayer.thread.queue.size() - 1) * this.perFileHeight))
+			height = ((LiteModMCPlayer.thread.queue.size() - 1) * this.perFileHeight);
 
 		this.scrollHeight = height;
-		//else if (dWheel <= )
 	}
 
 	public void moveUp()
 	{
 		if (this.selected != -1)
 		{
-			if (this.selected == LiteModMCPlayer.allFiles.size() - 1)
+			if (this.selected == LiteModMCPlayer.thread.queue.size() - 1)
 			{
-				MusicFile file = LiteModMCPlayer.allFiles.remove(this.selected);
-				LiteModMCPlayer.allFiles.add(0, file);
+				Playlist queue = LiteModMCPlayer.thread.queue;
+				String file = queue.remove(this.selected);
+				queue.add(0, file);
 				this.setSelected(0, true);
-				LiteModMCPlayer.thread.updateQueue();
+				LiteModMCPlayer.thread.updateQueue(queue);
 			} else
 			{
-				MusicFile file = LiteModMCPlayer.allFiles.remove(this.selected);
-				LiteModMCPlayer.allFiles.add(this.selected + 1, file);
+				Playlist queue = LiteModMCPlayer.thread.queue;
+				String file = queue.remove(this.selected);
+				queue.add(this.selected + 1, file);
 				this.setSelected(this.selected + 1, false);
-				LiteModMCPlayer.thread.updateQueue();
+				LiteModMCPlayer.thread.updateQueue(queue);
 			}
 		}
 	}
@@ -88,16 +90,18 @@ public class GuiMusicList
 		{
 			if (this.selected == 0)
 			{
-				MusicFile file = LiteModMCPlayer.allFiles.remove(0);
-				LiteModMCPlayer.allFiles.add(file);
-				this.setSelected(LiteModMCPlayer.allFiles.size() - 1, true);
-				LiteModMCPlayer.thread.updateQueue();
+				Playlist queue = LiteModMCPlayer.thread.queue;
+				String file = queue.remove(0);
+				queue.add(file);
+				this.setSelected(queue.size() - 1, true);
+				LiteModMCPlayer.thread.updateQueue(queue);
 			} else
 			{
-				MusicFile file = LiteModMCPlayer.allFiles.remove(this.selected);
-				LiteModMCPlayer.allFiles.add(this.selected - 1, file);
+				Playlist queue = LiteModMCPlayer.thread.queue;
+				String file = queue.remove(this.selected);
+				queue.add(this.selected - 1, file);
 				this.setSelected(this.selected - 1, false);
-				LiteModMCPlayer.thread.updateQueue();
+				LiteModMCPlayer.thread.updateQueue(queue);
 			}
 		}
 	}
@@ -109,7 +113,7 @@ public class GuiMusicList
 		if (this.width > 200)
 		{
 			int y = 0;
-			for (int i = 0; i < LiteModMCPlayer.allFiles.size(); i++)
+			for (int i = 0; i < LiteModMCPlayer.thread.queue.size(); i++)
 			{
 				// TODO Only Render if inside view, for better performance
 				// TODO Rewrite rendering, possibly move to seperate class for easier rendering elsewhere
@@ -119,7 +123,7 @@ public class GuiMusicList
 
 				if (yTemp < this.posY + this.height + 50 && yTemp > this.posY - 50 - this.perFileHeight)
 				{
-					MusicFile file = LiteModMCPlayer.allFiles.get(i);
+					MusicFile file = LiteModMCPlayer.data.get(LiteModMCPlayer.thread.queue.get(i));
 
 					GuiMusicFile guiMusicFile = new GuiMusicFile(file, xTemp, yTemp, this.width - 18, this.perFileHeight - 2);
 					guiMusicFile.draw(minecraft, i == this.selected);
@@ -192,7 +196,7 @@ public class GuiMusicList
 		if (this.selected != selected)
 			this.isFocused = false;
 
-		if (selected < LiteModMCPlayer.allFiles.size() && selected >= -1)
+		if (selected < LiteModMCPlayer.thread.queue.size() && selected >= -1)
 			this.selected = selected;
 
 		if (focus && selected >= 0)
@@ -204,17 +208,17 @@ public class GuiMusicList
 		return selected;
 	}
 
-    public MusicFile getSelectedFile()
+    public String getSelectedFile()
     {
         if (this.getSelected() != -1)
-            return LiteModMCPlayer.allFiles.get(this.getSelected());
+            return LiteModMCPlayer.thread.queue.get(this.getSelected());
         else return null;
     }
 
-	public MusicFile getFocused()
+	public String getFocused()
 	{
 		if (this.selected != -1 && this.isFocused)
-			return LiteModMCPlayer.allFiles.get(this.selected);
+			return LiteModMCPlayer.thread.queue.get(this.selected);
 		else return null;
 	}
 
@@ -226,7 +230,7 @@ public class GuiMusicList
 			int listMouseY = (mouseY - 50) + this.scrollHeight;
 			this.isFocused = systemTime - this.timeOnFirstClick < 500 && this.selected != -1 && (mouseY - 50 + this.scrollHeight) / this.perFileHeight == this.selected;
 			this.setSelected(listMouseY / this.perFileHeight, false);
-			if (this.selected > LiteModMCPlayer.allFiles.size() - 1)
+			if (this.selected > LiteModMCPlayer.thread.queue.size() - 1)
 				this.setSelected(-1, false);
 			System.out.println(" Time difference: " + (systemTime - this.timeOnFirstClick));
 
@@ -243,7 +247,7 @@ public class GuiMusicList
 	private float getScrollbarY()
 	{
 		float range = this.height - this.getScrollbarHeight() - 10;
-		float fileHeights = (LiteModMCPlayer.allFiles.size() - 1) * this.perFileHeight;
+		float fileHeights = (LiteModMCPlayer.thread.queue.size() - 1) * this.perFileHeight;
 		float decimal = ((float) this.scrollHeight) / fileHeights;
 		return (decimal * range) + 5;
 	}

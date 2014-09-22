@@ -65,7 +65,7 @@ public class Data
 		Playlist queue = new Playlist("QUEUE");
 		for (MusicFile file : this.allFiles.values())
 		{
-			queue.add(file.getTitleFromFieldKey());
+			queue.add(file.toKey());
 			System.out.println("Adding " + file.getTitle() + " to default Playlist.");
 		}
 		return queue;
@@ -95,7 +95,7 @@ public class Data
 
 			for (MusicFile value : files)
 			{
-				String key = value.getTitleFromFieldKey();
+				String key = value.toKey();
 				if (list != null)
 				{
 					MusicData data = list.get(key);
@@ -108,8 +108,8 @@ public class Data
 
 	public void updateSong(MusicFile musicFile)
 	{
-		System.out.println(" Updating song title. Changing " + musicFile.getTitleFromFieldKey() + " to " + musicFile.getTitle());
-		this.allFiles.put(musicFile.getTitleFromFieldKey(), musicFile);
+		System.out.println(" Updating song title. Changing " + musicFile.toKey() + " to " + musicFile.getTitle());
+		this.allFiles.put(musicFile.toKey(), musicFile);
 		try
 		{
 			this.saveChangedNames();
@@ -140,8 +140,8 @@ public class Data
 
 		for (MusicFile value : this.allFiles.values())
 		{
-			System.out.println("Reloading " + value.getTitleFromFieldKey());
-			String key = value.getTitleFromFieldKey();
+			System.out.println("Reloading " + value.toKey());
+			String key = value.toKey();
 			MusicData data = value.copyToData();
 			if (!data.isDefault())
 			{

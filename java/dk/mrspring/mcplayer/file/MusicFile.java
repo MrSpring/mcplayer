@@ -128,6 +128,14 @@ public class MusicFile
 		}
 	}
 
+    public String toKey()
+    {
+        String key;
+        String artist = this.getArtistFromFieldKey(), title = this.getTitleFromFieldKey();
+        key = (artist.toLowerCase().trim().replace(" ", "_") + "-" + title.toLowerCase().trim().replace(" ", "_"));
+        return key;
+    }
+
 	public File getBaseFile()
 	{
 		return this.baseFile;
@@ -188,7 +196,7 @@ public class MusicFile
 		return this.composer;
 	}
 
-	public String getTitleFromFieldKey()
+	private String getTitleFromFieldKey()
 	{
 		if (this.title.equals("UNTITLED"))
 			this.title = this.getField(FieldKey.TITLE);
@@ -202,7 +210,7 @@ public class MusicFile
 		else return this.customTitle;
 	}
 
-	public String getAlbumFromFieldKey()
+	private String getAlbumFromFieldKey()
 	{
 		if (this.album.equals("UNTITLED"))
 			this.album = this.getField(FieldKey.ALBUM);
@@ -211,12 +219,12 @@ public class MusicFile
 
 	public String getAlbum()
 	{
-		if (this.customTitle.equals(USE_FIELD_KEY))
+		if (this.customAlbum.equals(USE_FIELD_KEY))
 			return this.getAlbumFromFieldKey();
 		else return this.customAlbum;
 	}
 
-	public String getArtistFromFieldKey()
+	private String getArtistFromFieldKey()
 	{
 		if (this.artist.equals("UNTITLED"))
 			this.artist = this.getField(FieldKey.ARTIST);

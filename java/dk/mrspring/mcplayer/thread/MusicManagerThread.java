@@ -78,7 +78,7 @@ public class MusicManagerThread extends Thread
 	{
 		this.queue = queue;
 
-		if (!this.player.getPlaying().getTitleFromFieldKey().equals(this.queue.get(0)))
+		if (!this.player.getPlaying().toKey().equals(this.queue.get(0)))
 			this.playInQueue(0);
 	}
 

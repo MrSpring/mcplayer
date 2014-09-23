@@ -31,7 +31,7 @@ public class GuiScreenQueueManager extends GuiScreen
 	GuiFancyButton moveUpButton;
 	GuiFancyButton moveDownButton;
 	GuiFancyButton shuffleButton;
-    GuiFancyButton copyTitle;
+	GuiFancyButton copyTitle;
 	GuiFancyButton reloadNames;
 
 	GuiMusicList list;
@@ -53,7 +53,7 @@ public class GuiScreenQueueManager extends GuiScreen
 		this.moveUpButton = new GuiFancyButton(70, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_up").setDisabled();
 		this.moveDownButton = new GuiFancyButton(135, this.height - 50 + 6, 60, 39, "gui.mcplayer.move_down").setDisabled();
 		this.shuffleButton = new GuiFancyButton(210, this.height - 50 + 6, 80, 39, "gui.mcplayer.shuffle_music");
-        this.copyTitle = new GuiFancyButton(300, this.height - 50 + 6, 80, 39, "Copy Song Title");
+		this.copyTitle = new GuiFancyButton(300, this.height - 50 + 6, 80, 39, "Copy Song Title");
 		this.reloadNames = new GuiFancyButton(370, this.height - 50 + 6, 80, 36, "Reload Titles");
 
 		this.list = new GuiMusicList(0, 50, this.width, this.height - 100);
@@ -70,7 +70,6 @@ public class GuiScreenQueueManager extends GuiScreen
 		super.drawScreen(mouseX, mouseY, par3);
 
 		DrawingHelper.drawRect(0F, 0F, (float) this.width, this.height, scheme.getBaseColor(), scheme.getBaseAlpha());
-
 
 
 		if (this.list.getFocused() != null)
@@ -92,12 +91,11 @@ public class GuiScreenQueueManager extends GuiScreen
 		this.list.setWidth(this.width - this.detailWidth);
 		this.details.setWidth(this.detailWidth);
 		this.details.setPosX(this.width - this.detailWidth);
-        this.details.setShowing(LiteModMCPlayer.data.get(this.list.getFocused()));
+		this.details.setShowing(LiteModMCPlayer.data.get(this.list.getFocused()));
 		this.list.draw(this.mc, mouseX, mouseY);
-        if (this.detailWidth > 0)
-            this.details.draw(this.mc);
+		if (this.detailWidth > 0)
+			this.details.draw(this.mc);
 		//this.details.draw(this.mc);
-
 
 
 		DrawingHelper.drawRect(0F, 0F, (float) this.width, 50F, scheme.getBaseColor(), scheme.getBaseAlpha());
@@ -121,20 +119,51 @@ public class GuiScreenQueueManager extends GuiScreen
 		this.moveDownButton.drawButton(this.mc, mouseX, mouseY);
 		this.shuffleButton.drawButton(this.mc, mouseX, mouseY);
 		this.scrubber.draw(this.mc, mouseX, mouseY);
-        this.copyTitle.drawButton(this.mc, mouseX, mouseY);
+		this.copyTitle.drawButton(this.mc, mouseX, mouseY);
 		this.reloadNames.drawButton(this.mc, mouseX, mouseY);
 	}
 
 	@Override
-	protected void mouseClicked(int par1, int par2, int par3)
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
-		super.mouseClicked(par1, par2, par3);
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 
-		if (par1 < this.width - this.detailWidth)
-			this.list.mouseClicked(par1, par2);
+		if (mouseY < 50)
+			this.scrubber.mousePressed(mouseX, mouseY);
+		else if (mouseY > +this.height - 50)
+		{
+			if (this.doneButton.mousePressed(mouseX, mouseY, mouseButton))
+				this.mc.displayGuiScreen(this.onExit);
+			else if (this.moveUpButton.mousePressed(mouseX, mouseY, mouseButton))
+				this.list.moveDown();
+			else if (this.moveDownButton.mousePressed(mouseX, mouseY, mouseButton))
+				this.list.moveUp();
+			else if (this.shuffleButton.mousePressed(mouseX, mouseY, mouseButton))
+				this.list.shuffle();
+			else if (this.copyTitle.mousePressed(mouseX, mouseY, mouseButton))
+				this.copySontTitle();
+			else if (this.reloadNames.mousePressed(mouseX, mouseY, mouseButton))
+			{
+				try
+				{
+					LiteModMCPlayer.data.saveChangedNames();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		} else if (mouseX < this.width - this.detailWidth)
+			this.list.mouseClicked(mouseX, mouseY);
 		else
-			this.list.setSelected(-1, false);
+			this.details.mouseClicked(mouseX, mouseY, mouseButton);
 
+		/*if (!this.details.mouseClicked(par1, par2, par3))
+		{
+			if (par1 < this.width - this.detailWidth)
+				this.list.mouseClicked(par1, par2);
+			else
+				this.list.setSelected(-1, false);
+		}
 		if (this.doneButton.mousePressed(par1, par2, par3))
 			this.mc.displayGuiScreen(this.onExit);
 		else if (this.moveUpButton.mousePressed(par1, par2, par3))
@@ -154,13 +183,14 @@ public class GuiScreenQueueManager extends GuiScreen
 			{
 				e.printStackTrace();
 			}
-		}
+		} else
 
-		this.scrubber.mousePressed(par1, par2);
+
+		this.scrubber.mousePressed(par1, par2);*/
 	}
 
-    protected void copySontTitle()
-    {
+	protected void copySontTitle()
+	{
 		MusicFile file = LiteModMCPlayer.data.get(this.list.getSelectedFile());
 
 		if (file != null)
@@ -179,7 +209,14 @@ public class GuiScreenQueueManager extends GuiScreen
             StringSelection selection = new StringSelection(toCopy);
             clipboard.setContents(selection, selection);
         }*/
-    }
+	}
+
+	@Override
+	public void updateScreen()
+	{
+		this.details.onUpdate();
+		super.updateScreen();
+	}
 
 	@Override
 	protected void keyTyped(char par1, int par2)
@@ -194,9 +231,13 @@ public class GuiScreenQueueManager extends GuiScreen
 			LiteModMCPlayer.thread.scheduleNext();
 		else if (par2 == LiteModMCPlayer.playPrev.getKeyCode())
 			LiteModMCPlayer.thread.schedulePrev();
-        else if (par2 == Keyboard.KEY_C && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-            this.copySontTitle();
-		else super.keyTyped(par1, par2);
+		else if (par2 == Keyboard.KEY_C && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+			this.copySontTitle();
+		else
+		{
+			this.details.handlerKeyboardInput(par1, par2);
+			super.keyTyped(par1, par2);
+		}
 	}
 
 	@Override

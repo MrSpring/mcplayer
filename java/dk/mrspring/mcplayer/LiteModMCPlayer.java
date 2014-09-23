@@ -67,7 +67,7 @@ public class LiteModMCPlayer implements Tickable, Configurable
 
         thread.setVolume(config.getVolume());
 
-		if (!(minecraft.currentScreen instanceof GuiScreenAllMusic))
+		if (!(minecraft.currentScreen instanceof GuiScreenQueueManager))
         	PlayerOverlay.render(!config.getOverlaySize(), minecraft, thread);
 	}
 
